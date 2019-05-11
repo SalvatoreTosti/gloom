@@ -1,13 +1,16 @@
 (ns clj-boc.core
+  (:use [clj-boc.world :only [random-world]])
   (:require [lanterna.screen :as s]))
 
 (defrecord UI [kind])
-(defrecord World [])
 (defrecord Game [world uis input])
 
+(def screen-size [80 24])
+
 (defn clear-screen [screen]
-  (let [blank (apply str (repeat 80 \space))]
-    (doseq [row (range 24)]
+  (let [[cols, rows] screen-size
+         blank (apply str (repeat cols \space))]
+    (doseq [row (range rows)]
       (s/put-string screen 0 row blank))))
 
 (defmulti draw-ui
@@ -17,6 +20,22 @@
 (defmethod draw-ui :start [ui game screen]
    (s/put-string screen 0 0 "Welcome!")
    (s/put-string screen 0 1 "Press enter to win or any key to exit..."))
+
+(defmethod draw-ui :play [ui {{:keys [tiles]} :world :as game} screen]
+  (let [[cols rows] screen-size
+        vcols cols
+        vrows (dec rows)
+        start-x 0
+        start-y 0
+        end-x (+ start-x vcols)
+        end-y (+ start-y vrows)]
+    (doseq [[vrow-idx mrow-idx] (map vector
+                                     (range 0 vrows)
+                                     (range start-y end-y))
+            :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
+      (doseq [vcol-idx (range vcols)
+              :let [{:keys [glyph color]} (row-tiles vcol-idx)]]
+        (s/put-string screen vcol-idx vrow-idx glyph {:fg color})))))
 
 (defmethod draw-ui :win [ui game screen]
   (s/put-string screen 0 0 "Congrats you win!")
@@ -37,9 +56,15 @@
     (:kind (last (:uis game)))))
 
 (defmethod process-input :start [game input]
-  (if (= input :enter)
-    (assoc game :uis [(new UI :win)])
-    (assoc game :uis [(new UI :lose)])))
+  (-> game
+      (assoc :world (random-world))
+      (assoc :uis [(new UI :play)])))
+
+(defmethod process-input :play [game input]
+  (case input
+    :enter (assoc game :uis [(new UI :win)])
+    :backspace (assoc game :uis [(new UI :lose)])
+    game))
 
 (defmethod process-input :win [game input]
   (if (= input :escape)
@@ -64,7 +89,7 @@
 
 (defn new-game []
   (new Game
-       (new World)
+       nil
        [(new UI :start)]
        nil))
 
