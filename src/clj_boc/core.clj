@@ -1,5 +1,5 @@
 (ns clj-boc.core
-  (:use [clj-boc.world :only [random-world]])
+  (:use [clj-boc.world :only [random-world smooth-world]])
   (:require [lanterna.screen :as s]))
 
 (defrecord UI [kind])
@@ -64,6 +64,7 @@
   (case input
     :enter (assoc game :uis [(new UI :win)])
     :backspace (assoc game :uis [(new UI :lose)])
+    \s (assoc game :world (smooth-world (:world game)))
     game))
 
 (defmethod process-input :win [game input]
