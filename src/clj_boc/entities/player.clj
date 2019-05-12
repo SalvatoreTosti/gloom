@@ -5,7 +5,7 @@
         [clj-boc.coordinates :only [destination-coords]]
         [clj-boc.world :only [find-empty-tile get-tile-kind set-tile-floor]]))
 
-(defrecord Player [id glyph location])
+(defrecord Player [id glyph color location])
 
 (defn check-tile
   [world dest pred]
@@ -37,4 +37,4 @@
       :else world)))
 
 (defn make-player [world]
-  (->Player :player "@" (find-empty-tile world)))
+  (->Player :player "@" :yellow (find-empty-tile world)))

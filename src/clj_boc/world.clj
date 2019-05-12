@@ -76,8 +76,16 @@
 (defn set-tile-floor [world coord]
 (set-tile world coord (:floor tiles)))
 
+(defn get-entity-at [world coord]
+  (first (filter #(= coord (:location %))
+                 (vals (:entities world)))))
+
+(defn is-empty? [world coord]
+  (and (#{:floor} (get-tile-kind world coord))
+       (not (get-entity-at world coord))))
+
 (defn find-empty-tile [world]
   (loop [coord (random-coordinate)]
-    (if (#{:floor} (get-tile-kind world coord))
+    (if (is-empty? world coord)
       coord
       (recur (random-coordinate)))))

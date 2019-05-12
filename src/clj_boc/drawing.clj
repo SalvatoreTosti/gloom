@@ -25,13 +25,17 @@
         start-y (- end-y vrows)]
         [start-x start-y end-x end-y]))
 
-(defn draw-player [screen start-x start-y player]
+(defn draw-entity [screen start-x start-y {:keys [location glyph color]}]
+  (let [[entity-x entity-y] location
+        x (- entity-x start-x)
+        y (- entity-y start-y)]
+    (s/put-string screen x y glyph {:fg color})))
+
+(defn highlight-player [screen start-x start-y player]
   (let [[player-x player-y] (:location player)
         x (- player-x start-x)
         y (- player-y start-y)]
-      (s/put-string screen x y (:glyph player) {:fg :white})
-      (s/move-cursor screen x y)))
-
+    (s/move-cursor screen x y)))
 
 (defn draw-world [screen vrows vcols start-x start-y end-x end-y tiles]
   (doseq [[vrow-idx mrow-idx] (map vector
@@ -66,8 +70,10 @@
         vrows (dec rows)
         [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
     (draw-world screen vrows vcols start-x start-y end-x end-y tiles)
-    (draw-player screen start-x start-y player)
-    (draw-hud screen game start-x start-y)))
+    (doseq [entity (vals entities)]
+      (draw-entity screen start-x start-y entity))
+    (draw-hud screen game start-x start-y)
+    (highlight-player screen start-x start-y player)))
 
 (defmethod draw-ui :win [ui game screen]
   (s/put-string screen 0 0 "Congrats you win!")

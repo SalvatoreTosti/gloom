@@ -1,17 +1,28 @@
 (ns clj-boc.input
-  (:use [clj-boc.world :only [random-world smooth-world]]
+  (:use [clj-boc.world :only [random-world smooth-world find-empty-tile]]
         [clj-boc.UIcore :only [->UI]]
-        [clj-boc.entities.player :only [make-player move-player]])
+        [clj-boc.entities.player :only [make-player move-player]]
+        [clj-boc.entities.lichen :only [make-lichen]])
   (:require [lanterna.screen :as s]))
 
 (defn move [[x y] [dx dy]]
   [(+ x dx) (+ y dy)])
 
+(defn add-lichen [world]
+  (let [{:as lichen :keys [id]} (make-lichen (find-empty-tile world))]
+    (assoc-in world [:entities id] lichen)))
+
+(defn populate-world [world]
+  (let [world (assoc-in world [:entities :player]
+                        (make-player world))
+        world (nth (iterate add-lichen world) 30)]
+    world))
+
 (defn reset-game [game]
   (let [fresh-world (random-world)]
     (-> game
         (assoc :world fresh-world)
-        (assoc-in [:world :entities :player] (make-player fresh-world))
+        (update-in [:world] populate-world)
         (assoc :uis [(->UI :play)]))))
 
 (defmulti process-input
