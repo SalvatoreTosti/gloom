@@ -1,31 +1,36 @@
 (ns clj-boc.input
   (:use [clj-boc.world :only [random-world smooth-world]]
-        [clj-boc.UIcore :only [->UI]])
+        [clj-boc.UIcore :only [->UI]]
+        [clj-boc.entities.player :only [make-player move-player]])
   (:require [lanterna.screen :as s]))
 
 (defn move [[x y] [dx dy]]
   [(+ x dx) (+ y dy)])
+
+(defn reset-game [game]
+  (let [fresh-world (random-world)]
+    (-> game
+        (assoc :world fresh-world)
+        (assoc-in [:world :player] (make-player fresh-world))
+        (assoc :uis [(->UI :play)]))))
 
 (defmulti process-input
   (fn [game input]
     (:kind (last (:uis game)))))
 
 (defmethod process-input :start [game input]
-  (-> game
-      (assoc :world (random-world))
-      (assoc :uis [(->UI :play)])))
+  (reset-game game))
 
 (defmethod process-input :play [game input]
   (case input
     :enter (assoc game :uis [(->UI :win)])
     :backspace (assoc game :uis [(->UI :lose)])
     \q (assoc game :uis [])
-    \m (assoc game :world (smooth-world (:world game)))
 
-    \w (update-in game [:location] move [0 -1])
-    \a (update-in game [:location] move [-1 0])
-    \s (update-in game [:location] move [0 1])
-    \d (update-in game [:location] move [1 0])
+    \w (update-in game [:world] move-player :n)
+    \a (update-in game [:world] move-player :w)
+    \s (update-in game [:world] move-player :s)
+    \d (update-in game [:world] move-player :e)
 
     game))
 
