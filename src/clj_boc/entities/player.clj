@@ -17,7 +17,7 @@
 (extend-type Player Mobile
   (move [this world dest]
         {:pre [(can-move? this world dest)]}
-        (assoc-in world [:player :location] dest))
+        (assoc-in world [:entities :player :location] dest))
   (can-move? [this world dest]
              (check-tile world dest #{:floor})))
 
@@ -29,7 +29,7 @@
             (check-tile world dest #{:wall})))
 
 (defn move-player [world dir]
-  (let [player (:player world)
+  (let [player (get-in world [:entities :player])
         target (destination-coords (:location player) dir)]
     (cond
       (can-move? player world target) (move player world target)

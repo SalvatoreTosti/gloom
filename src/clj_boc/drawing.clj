@@ -59,7 +59,8 @@
 
 (defmethod draw-ui :play [ui game screen]
   (let [world (:world game)
-        {:keys [tiles player]} world
+        {:keys [tiles entities]} world
+        player (:player entities)
         [cols rows] screen-size
         vcols cols
         vrows (dec rows)

@@ -11,7 +11,7 @@
   (let [fresh-world (random-world)]
     (-> game
         (assoc :world fresh-world)
-        (assoc-in [:world :player] (make-player fresh-world))
+        (assoc-in [:world :entities :player] (make-player fresh-world))
         (assoc :uis [(->UI :play)]))))
 
 (defmulti process-input
