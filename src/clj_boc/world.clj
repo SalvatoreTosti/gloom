@@ -1,4 +1,5 @@
-(ns clj-boc.world)
+(ns clj-boc.world
+  (:use [clj-boc.coordinates :only [neighbors]]))
 
 (def world-size [160 50])
 
@@ -89,3 +90,8 @@
     (if (is-empty? world coord)
       coord
       (recur (random-coordinate)))))
+
+(defn find-empty-neighbor [world coord]
+  (let [candidates (filter #(is-empty? world %) (neighbors coord))]
+    (when (seq candidates)
+      (rand-nth candidates))))
