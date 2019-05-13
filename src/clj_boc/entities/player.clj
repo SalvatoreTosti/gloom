@@ -29,7 +29,7 @@
         target (destination-coords (:location player) dir)
         entity-at-target (get-entity-at world target)]
     (cond
-      entity-at-target (attack player world entity-at-target)
+      entity-at-target (attack player entity-at-target world)
       (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)
       :else world)))
@@ -42,7 +42,7 @@
             (check-tile world dest #{:wall})))
 
 (extend-type Player Attacker
-  (attack [this world target]
+  (attack [this target world]
           {:pre [(satisfies? Destructible target)]}
           (let [damage 1]
             (take-damage target damage world))))
