@@ -30,14 +30,14 @@
     (cond
       entity-at-target (attack player world entity-at-target)
       (can-move? player world target) (move player world target)
-      (can-dig? player world target) (dig player world target)
+      (can-dig? player target world) (dig player target world)
       :else world)))
 
 (extend-type Player Digger
-  (dig [this world dest]
-       {:pre [(can-dig? this world dest)]}
+  (dig [this dest world]
+       {:pre [(can-dig? this dest world)]}
        (set-tile-floor world dest))
-  (can-dig? [this world dest]
+  (can-dig? [this dest world]
             (check-tile world dest #{:wall})))
 
 (extend-type Player Attacker
