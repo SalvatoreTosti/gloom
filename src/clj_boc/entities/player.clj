@@ -45,7 +45,7 @@
   (attack [this world target]
           {:pre [(satisfies? Destructible target)]}
           (let [damage 1]
-            (take-damage target world damage))))
+            (take-damage target damage world))))
 
 (defn make-player [world]
   (->Player :player "@" :yellow (find-empty-tile world)))
