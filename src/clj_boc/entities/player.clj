@@ -16,11 +16,12 @@
 (extend-type Player Entity
   (tick [this world]
         world))
+
 (extend-type Player Mobile
-  (move [this world dest]
-        {:pre [(can-move? this world dest)]}
+  (move [this dest world]
+        {:pre [(can-move? this dest world)]}
         (assoc-in world [:entities :player :location] dest))
-  (can-move? [this world dest]
+  (can-move? [this dest world]
              (is-empty? world dest)))
 
 (defn move-player [world dir]
@@ -29,7 +30,7 @@
         entity-at-target (get-entity-at world target)]
     (cond
       entity-at-target (attack player world entity-at-target)
-      (can-move? player world target) (move player world target)
+      (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)
       :else world)))
 
