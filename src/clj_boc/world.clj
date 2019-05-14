@@ -95,3 +95,7 @@
   (let [candidates (filter #(is-empty? world %) (neighbors coord))]
     (when (seq candidates)
       (rand-nth candidates))))
+
+(defn check-tile
+  [world dest pred]
+  (pred (get-tile-kind world dest)))

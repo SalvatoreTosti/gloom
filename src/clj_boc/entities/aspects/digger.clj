@@ -1,7 +1,10 @@
-(ns clj-boc.entities.aspects.digger)
+(ns clj-boc.entities.aspects.digger
+    (:use [clj-boc.entities.core :only [defaspect]]
+          [clj-boc.world :only [set-tile-floor check-tile]]))
 
-(defprotocol Digger
-  (dig [this target world]
-       "Dig a location.")
-  (can-dig? [this target world]
-            "Return if the entity can dig the new location."))
+(defaspect Digger
+  (dig [this dest world]
+       {:pre [(can-dig? this dest world)]}
+       (set-tile-floor world dest))
+  (can-dig? [this dest world]
+            (check-tile world dest #{:wall})))
