@@ -6,7 +6,13 @@
 (defrecord Lichen [id glyph color location hp])
 
 (defn make-lichen [location]
-  (->Lichen (get-id) "F" :green location 1))
+  (map->Lichen {
+                 :id (get-id)
+                 :glyph "F"
+                 :color :green
+                 :location location
+                 :max-hp 1
+                 :hp 1}))
 
 (defn should-grow []
   (< (rand) 0.01))
