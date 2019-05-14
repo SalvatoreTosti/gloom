@@ -7,10 +7,3 @@
                  (if-not (pos? (:hp damaged-this))
                    (update-in world [:entities] dissoc id)
                    (update-in world [:entities id] assoc damaged-this)))))
-
-(defprotocol Destructible
-  (take-damage [this damage world]
-               "Take the given amount of damage, update world appropriately")
-
-  (defense-value [this world]
-    (get this :defense 0)))

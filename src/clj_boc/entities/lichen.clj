@@ -1,6 +1,6 @@
 (ns clj-boc.entities.lichen
   (:use [clj-boc.entities.core :only [Entity get-id add-aspect]]
-        [clj-boc.entities.aspects.destructible :only [Destructible take-damage]]
+        [clj-boc.entities.aspects.destructible :only [Destructible]]
         [clj-boc.world :only [find-empty-neighbor]]))
 
 (defrecord Lichen [id glyph color location hp])
@@ -30,10 +30,3 @@
           world)))
 
 (add-aspect Lichen Destructible)
-
-;; (extend-type Lichen Destructible
-;;   (take-damage [{:keys [id] :as this} damage world]
-;;                (let [damaged-this (update-in this [:hp] - damage)]
-;;                  (if-not (pos? (:hp damaged-this))
-;;                    (update-in world [:entities] dissoc id)
-;;                    (update-in world [:entities id] assoc damaged-this)))))
