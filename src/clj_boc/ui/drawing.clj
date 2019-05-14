@@ -1,4 +1,4 @@
-(ns clj-boc.drawing
+(ns clj-boc.ui.drawing
   (:use [clj-boc.utils :only [enumerate]])
   (:require [lanterna.screen :as s]))
 

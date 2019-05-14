@@ -1,6 +1,6 @@
-(ns clj-boc.input
+(ns clj-boc.ui.input
   (:use [clj-boc.world :only [random-world smooth-world find-empty-tile]]
-        [clj-boc.UIcore :only [->UI]]
+        [clj-boc.ui.core :only [->UI]]
         [clj-boc.entities.player :only [make-player move-player]]
         [clj-boc.entities.lichen :only [make-lichen]]
         [clj-boc.entities.bunny :only [make-bunny]])

@@ -1,9 +1,8 @@
 (ns clj-boc.core
   (:use [clj-boc.world :only [random-world smooth-world]]
-        [clj-boc.drawing :only [draw-game]]
-        [clj-boc.input :only [get-input]]
-        [clj-boc.input :only [get-input process-input]]
-        [clj-boc.UIcore :only [->UI]]
+        [clj-boc.ui.drawing :only [draw-game]]
+        [clj-boc.ui.input :only [get-input process-input]]
+        [clj-boc.ui.core :only [->UI]]
         [clj-boc.entities.core :only [tick]])
   (:require [lanterna.screen :as s]))
 
@@ -27,12 +26,6 @@
               game (clear-messages game)]
               (recur (get-input game screen)))
         (recur (process-input (dissoc game :input) input))))))
-
-;;     (when-not (empty? uis)
-;;       (draw-game game screen)
-;;       (if (nil? input)
-;;         (recur (get-input (update-in game [:world] tick-all) screen))
-;;         (recur (process-input (dissoc game :input) input))))))
 
 (defn new-game []
   (assoc (->Game

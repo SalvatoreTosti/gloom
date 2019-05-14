@@ -1,3 +1,3 @@
-(ns clj-boc.UIcore)
+(ns clj-boc.ui.core)
 
 (defrecord UI [kind])
