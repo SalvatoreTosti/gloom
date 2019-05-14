@@ -4,7 +4,7 @@
         [clj-boc.entities.aspects.digger :only [Digger dig can-dig?]]
         [clj-boc.coordinates :only [destination-coords]]
         [clj-boc.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
-        [clj-boc.entities.aspects.destructible :only [Destructible take-damage]]
+        [clj-boc.entities.aspects.destructible :only [Destructible]]
         [clj-boc.entities.aspects.attacker :only [Attacker attack]]))
 
 (defrecord Player [id glyph color location])
@@ -46,8 +46,4 @@
   (can-dig? [this dest world]
             (check-tile world dest #{:wall})))
 
-(extend-type Player Attacker
-  (attack [this target world]
-          {:pre [(satisfies? Destructible target)]}
-          (let [damage 1]
-            (take-damage target damage world))))
+(add-aspect Player Attacker)

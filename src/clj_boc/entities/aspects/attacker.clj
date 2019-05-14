@@ -1,8 +1,9 @@
-(ns clj-boc.entities.aspects.attacker)
+(ns clj-boc.entities.aspects.attacker
+  (:use [clj-boc.entities.core :only [defaspect]]
+        [clj-boc.entities.aspects.destructible :only [Destructible take-damage]]))
 
-(defprotocol Attacker
+(defaspect Attacker
   (attack [this target world]
-          "Attack the target.")
-
-  (attack-value [this world]
-    (get this :attack 1)))
+          {:pre [(satisfies? Destructible target)]}
+          (let [damage 1]
+            (take-damage target damage world))))
