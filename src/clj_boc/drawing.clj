@@ -1,4 +1,5 @@
 (ns clj-boc.drawing
+  (:use [clj-boc.utils :only [enumerate]])
   (:require [lanterna.screen :as s]))
 
 (def screen-size [80 24])
@@ -46,7 +47,7 @@
             :let [{:keys [glyph color]} (row-tiles vcol-idx)]]
       (s/put-string screen vcol-idx vrow-idx glyph {:fg color}))))
 
-(defn draw-hud [screen game start-x start-y]
+(defn draw-hud [screen game]
   (let [hud-row (dec (second (s/get-size screen)))
         player (get-in game [:world :entities :player])
         {:keys [location hp max-hp]} player
@@ -63,6 +64,10 @@
    (s/put-string screen 0 0 "Welcome!")
    (s/put-string screen 0 1 "Press enter to win or any key to exit..."))
 
+(defn draw-messages [screen messages]
+  (doseq [[i msg] (enumerate messages)]
+    (s/put-string screen 0 i msg {:fg :black :bg :white})))
+
 (defmethod draw-ui :play [ui game screen]
   (let [world (:world game)
         {:keys [tiles entities]} world
@@ -74,7 +79,8 @@
     (draw-world screen vrows vcols start-x start-y end-x end-y tiles)
     (doseq [entity (vals entities)]
       (draw-entity screen start-x start-y entity))
-    (draw-hud screen game start-x start-y)
+    (draw-hud screen game)
+    (draw-messages screen (:messages player))
     (highlight-player screen start-x start-y player)))
 
 (defmethod draw-ui :win [ui game screen]

@@ -5,7 +5,7 @@
         [clj-boc.world :only [find-empty-tile find-empty-neighbor]]))
 
 
-(defrecord Bunny [id glyph color location max-hp hp])
+(defrecord Bunny [id glyph color location max-hp hp name])
 
 (defn make-bunny [location]
   (map->Bunny {
@@ -14,7 +14,8 @@
                  :color :yellow
                  :location location
                  :max-hp 4
-                 :hp 4}))
+                 :hp 4
+                 :name "bunny"}))
 
 (defn should-move []
   (< (rand) 0.01))

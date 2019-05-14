@@ -1,9 +1,10 @@
 (ns clj-boc.entities.lichen
   (:use [clj-boc.entities.core :only [Entity get-id add-aspect]]
         [clj-boc.entities.aspects.destructible :only [Destructible]]
+        [clj-boc.entities.aspects.receiver :only [send-message-nearby]]
         [clj-boc.world :only [find-empty-neighbor]]))
 
-(defrecord Lichen [id glyph color location hp])
+(defrecord Lichen [id glyph color location max-hp hp name])
 
 (defn make-lichen [location]
   (map->Lichen {
@@ -12,15 +13,18 @@
                  :color :green
                  :location location
                  :max-hp 1
-                 :hp 1}))
+                 :hp 1
+                 :name "lichen"}))
 
 (defn should-grow []
   (< (rand) 0.01))
 
-(defn grow [lichen world]
-  (if-let [target (find-empty-neighbor world (:location lichen))]
-    (let [new-lichen (make-lichen target)]
-      (assoc-in world [:entities (:id new-lichen)] new-lichen))
+(defn grow [{:keys [location]} world]
+  (if-let [target (find-empty-neighbor world location)]
+    (let [new-lichen (make-lichen target)
+          world (assoc-in world [:entities (:id new-lichen)] new-lichen)
+          world (send-message-nearby location "The lichen grows." world)]
+      world)
     world))
 
 (extend-type Lichen Entity

@@ -1,5 +1,6 @@
 (ns clj-boc.world
-  (:use [clj-boc.coordinates :only [neighbors]]))
+  (:use [clj-boc.coordinates :only [neighbors]]
+        [clj-boc.utils :only [abs]]))
 
 (def world-size [160 50])
 
@@ -99,3 +100,15 @@
 (defn check-tile
   [world dest pred]
   (pred (get-tile-kind world dest)))
+
+(defn radial-distance
+  [[x1 y1] [x2 y2]]
+  (max (abs (- x1 x2))
+       (abs (- y1 y2))))
+
+(defn get-entities-around
+  ([world coord] (get-entities-around world coord 1))
+  ([world coord radius]
+   (filter #(<= (radial-distance coord (:location %))
+                radius)
+           (vals (:entities world)))))

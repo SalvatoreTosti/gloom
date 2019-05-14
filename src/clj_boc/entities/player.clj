@@ -4,10 +4,11 @@
         [clj-boc.entities.aspects.digger :only [Digger dig can-dig?]]
         [clj-boc.entities.aspects.destructible :only [Destructible]]
         [clj-boc.entities.aspects.attacker :only [Attacker attack]]
+        [clj-boc.entities.aspects.receiver :only [Receiver]]
         [clj-boc.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
         [clj-boc.coordinates :only [destination-coords]]))
 
-(defrecord Player [id glyph color location])
+(defrecord Player [id glyph color location max-hp hp attack])
 
 (defn make-player [world]
   (map->Player {
@@ -16,7 +17,8 @@
                  :color :yellow
                  :location (find-empty-tile world)
                  :max-hp 10
-                 :hp 10}))
+                 :hp 10
+                 :attack 2}))
 
 (extend-type Player Entity
   (tick [this world]
@@ -35,5 +37,5 @@
       :else world)))
 
 (add-aspect Player Digger)
-
 (add-aspect Player Attacker)
+(add-aspect Player Receiver)

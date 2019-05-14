@@ -15,6 +15,9 @@
 (defn tick-all [world]
   (reduce tick-entity world (vals (:entities world))))
 
+(defn clear-messages [game]
+  (assoc-in game [:world :entities :player :messages] nil))
+
 (defn run-game [game screen]
   (loop [{:keys [input uis] :as game} game]
     (when-not (empty? uis)
