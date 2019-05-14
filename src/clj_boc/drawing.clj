@@ -47,10 +47,12 @@
       (s/put-string screen vcol-idx vrow-idx glyph {:fg color}))))
 
 (defn draw-hud [screen game start-x start-y]
-  (let [hud-row (dec (second screen-size))
-        [x y] (get-in game [:world :player :location])
-        info (str "loc: [" x "-" y "]")
-        info (str info " start: [" start-x "-" start-y "]")]
+  (let [hud-row (dec (second (s/get-size screen)))
+        player (get-in game [:world :entities :player])
+        {:keys [location hp max-hp]} player
+        [x y] location
+        info (str "hp: [" hp "/" max-hp "]")
+        info (str info " loc: [" x "-" y "]")]
     (s/put-string screen 0 hud-row info)))
 
 (defmulti draw-ui

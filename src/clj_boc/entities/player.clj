@@ -9,6 +9,16 @@
 
 (defrecord Player [id glyph color location])
 
+(defn make-player [world]
+  (map->Player {
+                 :id :player
+                 :glyph "@"
+                 :color :yellow
+                 :location (find-empty-tile world)
+                 :max-hp 10
+                 :hp 10}))
+
+
 (defn check-tile
   [world dest pred]
   (pred (get-tile-kind world dest)))
@@ -46,6 +56,3 @@
           {:pre [(satisfies? Destructible target)]}
           (let [damage 1]
             (take-damage target damage world))))
-
-(defn make-player [world]
-  (->Player :player "@" :yellow (find-empty-tile world)))
