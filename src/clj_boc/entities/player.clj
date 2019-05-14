@@ -1,5 +1,5 @@
 (ns clj-boc.entities.player
-  (:use [clj-boc.entities.core :only [Entity]]
+  (:use [clj-boc.entities.core :only [Entity add-aspect]]
         [clj-boc.entities.aspects.mobile :only [Mobile move can-move?]]
         [clj-boc.entities.aspects.digger :only [Digger dig can-dig?]]
         [clj-boc.coordinates :only [destination-coords]]
@@ -27,12 +27,7 @@
   (tick [this world]
         world))
 
-(extend-type Player Mobile
-  (move [this dest world]
-        {:pre [(can-move? this dest world)]}
-        (assoc-in world [:entities :player :location] dest))
-  (can-move? [this dest world]
-             (is-empty? world dest)))
+(add-aspect Player Mobile)
 
 (defn move-player [world dir]
   (let [player (get-in world [:entities :player])

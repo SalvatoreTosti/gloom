@@ -1,7 +1,12 @@
-(ns clj-boc.entities.aspects.mobile)
+(ns clj-boc.entities.aspects.mobile
+  (:use [clj-boc.world :only [is-empty?]]
+        [clj-boc.entities.core :only [defaspect]]))
 
-(defprotocol Mobile
+(defaspect Mobile
   (move [this dest world]
-        "Move this entity to a new location.")
+        {:pre [(can-move? this dest world)]}
+        (assoc-in world [:entities (:id this) :location] dest))
   (can-move? [this dest world]
-             "Return if the entity can move to a new location."))
+             (is-empty? world dest)))
+
+
