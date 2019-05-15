@@ -1,5 +1,6 @@
 (ns clj-boc.ui.drawing
-  (:use [clj-boc.utils :only [enumerate]])
+  (:use [clj-boc.utils :only [enumerate]]
+        [clj-boc.entities.aspects.leveler :only [nearest-threshold]])
   (:require [lanterna.screen :as s]))
 
 (def screen-size [80 24])
@@ -50,10 +51,10 @@
 (defn draw-hud [screen game]
   (let [hud-row (dec (second (s/get-size screen)))
         player (get-in game [:world :entities :player])
-        {:keys [location hp max-hp]} player
+        {:keys [location hp max-hp exp]} player
         [x y] location
         info (str "hp: [" hp "/" max-hp "]")
-        info (str info " loc: [" x "-" y "]")]
+        info (str info " exp: [" exp " / " (nearest-threshold exp) "]")]
     (s/put-string screen 0 hud-row info)))
 
 (defmulti draw-ui
