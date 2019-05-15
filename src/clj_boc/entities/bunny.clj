@@ -18,7 +18,7 @@
                  :name "bunny"}))
 
 (defn should-move []
-  (< (rand) 0.01))
+  (< (rand) 0.5))
 
 (defn get-move-location [bunny world]
   (if-let [target (find-empty-neighbor world (:location bunny))]
@@ -27,9 +27,11 @@
 
 (extend-type Bunny Entity
   (tick [this world]
-        (if (should-move)
-          (move this (get-move-location this world) world)
-          world)))
+        (let [move-location (get-move-location this world)]
+          (cond
+            (not (should-move)) world
+            (not (can-move? this move-location world)) world
+            :else (move this (get-move-location this world) world)))))
 
 (add-aspect Bunny Mobile)
 (add-aspect Bunny Destructible)
