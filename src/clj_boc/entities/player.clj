@@ -6,6 +6,8 @@
         [clj-boc.entities.aspects.attacker :only [Attacker attack]]
         [clj-boc.entities.aspects.receiver :only [Receiver]]
         [clj-boc.entities.aspects.leveler :only [Leveler add-exp]]
+        [clj-boc.entities.aspects.item :only [Item pick-up]]
+
 
         [clj-boc.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
         [clj-boc.coordinates :only [destination-coords]]))
@@ -34,6 +36,7 @@
         target (destination-coords (:location player) dir)
         entity-at-target (get-entity-at world target)]
     (cond
+      (satisfies? Item entity-at-target) (pick-up entity-at-target player world)
       entity-at-target (attack player entity-at-target world)
       (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)

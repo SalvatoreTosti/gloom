@@ -20,6 +20,7 @@
     (let [this (update-in this [:max-hp] inc)
           this (update-in this [:hp] inc)]
       (assoc-in world [:entities id] this)))
+
   (add-exp [{:keys [id exp] :as this} exp-amount world]
            (let [new-exp (+ exp-amount exp)
                  new-this (assoc-in this [:exp] new-exp)]

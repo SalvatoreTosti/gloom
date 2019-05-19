@@ -3,7 +3,8 @@
         [clj-boc.ui.core :only [->UI]]
         [clj-boc.entities.player :only [make-player move-player]]
         [clj-boc.entities.lichen :only [make-lichen]]
-        [clj-boc.entities.bunny :only [make-bunny]])
+        [clj-boc.entities.bunny :only [make-bunny]]
+        [clj-boc.entities.apple :only [make-apple]])
   (:require [lanterna.screen :as s]))
 
 (defn move [[x y] [dx dy]]
@@ -24,6 +25,7 @@
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
+        (add-creatures make-apple 30)
         )
     ))
 
