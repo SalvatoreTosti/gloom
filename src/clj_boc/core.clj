@@ -6,7 +6,7 @@
         [clj-boc.entities.core :only [tick]])
   (:require [lanterna.screen :as s]))
 
-(defrecord Game [world uis input])
+(defrecord Game [world uis input tick-skip])
 
 (defn tick-entity [world entity]
   (tick entity world))
@@ -18,19 +18,29 @@
   (assoc-in game [:world :entities :player :messages] nil))
 
 (defn run-game [game screen]
-  (loop [{:keys [input uis] :as game} game]
+  (loop [{:keys [input uis skip-tick] :as game} game]
     (when (seq uis)
-      (if (nil? input)
-        (let [game (update-in game [:world] tick-all)
+      (cond
+        (not (nil? skip-tick))
+        (let [game (assoc-in game [:skip-tick] nil)
               _ (draw-game game screen)
               game (clear-messages game)]
               (recur (get-input game screen)))
+
+        (nil? input)
+        (let [game (update-in game [:world] tick-all)
+              _ (draw-game game screen)
+              game (clear-messages game)]
+          (recur (get-input game screen)))
+
+        :else
         (recur (process-input (dissoc game :input) input))))))
 
 (defn new-game []
   (assoc (->Game
               nil
               [(->UI :start)]
+              nil
               nil)
           :location [40 20]))
 

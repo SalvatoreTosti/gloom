@@ -29,6 +29,10 @@
   (tick [this world]
         world))
 
+(defn view-inventory [this]
+  (get-in this [:inventory :name]))
+
+
 (add-aspect Player Mobile)
 
 (defn move-player [world dir]

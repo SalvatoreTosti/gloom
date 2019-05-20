@@ -20,14 +20,11 @@
        n))
 
 (defn populate-world [world]
-  (let [world (assoc-in world [:entities :player]
-                        (make-player world))]
+  (let [world (assoc-in world [:entities :player] (make-player world))]
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
-        (add-creatures make-apple 30)
-        )
-    ))
+        (add-creatures make-apple 30))))
 
 (defn reset-game [game]
   (let [fresh-world (random-world)]
@@ -35,6 +32,9 @@
         (assoc :world fresh-world)
         (update-in [:world] populate-world)
         (assoc :uis [(->UI :play)]))))
+
+(defn skip-tick [game]
+  (assoc game :skip-tick true))
 
 (defmulti process-input
   (fn [game input]
@@ -47,6 +47,10 @@
   (case input
     :enter (assoc game :uis [(->UI :win)])
     :backspace (assoc game :uis [(->UI :lose)])
+    \n (-> game
+           (assoc :uis [(->UI :inventory)])
+           (skip-tick))
+
     \q (assoc game :uis [])
 
     \w (update-in game [:world] move-player :n)
@@ -65,6 +69,12 @@
   (if (= input :escape)
     (assoc game :uis [])
     (assoc game :uis [(->UI :start)])))
+
+(defmethod process-input :inventory [game input]
+  (let [game (skip-tick game)]
+    (case input
+      \n (assoc game :uis [(->UI :play)])
+      game)))
 
 (defn get-input [game screen]
   (assoc game :input (s/get-key-blocking screen)))
