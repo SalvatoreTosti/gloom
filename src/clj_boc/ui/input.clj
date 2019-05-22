@@ -50,6 +50,9 @@
     \n (-> game
            (assoc :uis [(->UI :inventory)])
            (skip-tick))
+    \x (-> game
+           (assoc :uis [(->UI :spell)])
+           (skip-tick))
 
     \q (assoc game :uis [])
 
@@ -74,6 +77,12 @@
   (let [game (skip-tick game)]
     (case input
       \n (assoc game :uis [(->UI :play)])
+      game)))
+
+(defmethod process-input :spell [game input]
+  (let [game (skip-tick game)]
+    (case input
+      \x (assoc game :uis [(->UI :play)])
       game)))
 
 (defn get-input [game screen]

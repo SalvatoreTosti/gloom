@@ -92,21 +92,24 @@
   (s/put-string screen 0 0 "Better luck next time")
   (s/put-string screen 0 1 "Press any escape to exit, anything else to restart..."))
 
-
-(defn draw-item [screen [index item]]
-  (s/put-string screen 0 index (:name item))
-  )
+(defn draw-string-list [screen strings]
+  (dorun (for [x (range (count strings))]
+           (s/put-string screen 0 x (nth strings x)))))
 
 (defn draw-item-list [screen line-count start-draw items]
-  (let [ items (vals items)
-         items (drop start-draw items)
-         indexed-list (map-indexed vector items)]
-    (dorun (map #(draw-item screen %) indexed-list))))
+  (->> items
+      (vals)
+      (drop start-draw)
+      (map :name)
+      (draw-string-list screen)))
 
 (defmethod draw-ui :inventory [ui game screen]
   (let [inv (get-in game [:world :entities :player :inventory])]
-    (draw-item-list screen 0 0 inv)
-    ))
+    (draw-item-list screen 0 0 inv)))
+
+(defmethod draw-ui :spell [ui game screen]
+  (let [lst ["first", "second", "third"]]
+    (draw-string-list screen lst)))
 
 (defn draw-game [game screen]
   (clear-screen screen)
