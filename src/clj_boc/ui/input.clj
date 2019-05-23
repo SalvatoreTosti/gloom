@@ -43,15 +43,22 @@
 (defmethod process-input :start [game input]
   (reset-game game))
 
+(defn initalize-selection [game]
+  (let [ui (first (:uis game))
+        new-ui (assoc ui :selection 0)]
+    (assoc game :uis [new-ui])))
+
 (defmethod process-input :play [game input]
   (case input
     :enter (assoc game :uis [(->UI :win)])
     :backspace (assoc game :uis [(->UI :lose)])
     \n (-> game
            (assoc :uis [(->UI :inventory)])
+           (initalize-selection)
            (skip-tick))
     \x (-> game
            (assoc :uis [(->UI :spell)])
+           (initalize-selection)
            (skip-tick))
 
     \q (assoc game :uis [])
@@ -73,16 +80,34 @@
     (assoc game :uis [])
     (assoc game :uis [(->UI :start)])))
 
+(defn selection-up [game]
+  (let [current-UI (first (:uis game))
+        new-UI (update current-UI :selection dec)]
+    (assoc game :uis [new-UI])))
+
+(defn selection-down [game]
+  (let [current-UI (first (:uis game))
+        new-UI (update current-UI :selection inc)]
+    (assoc game :uis [new-UI])))
+
 (defmethod process-input :inventory [game input]
   (let [game (skip-tick game)]
     (case input
       \n (assoc game :uis [(->UI :play)])
+
+      \w (selection-up game)
+      \s (selection-down game)
+
       game)))
 
 (defmethod process-input :spell [game input]
   (let [game (skip-tick game)]
     (case input
       \x (assoc game :uis [(->UI :play)])
+
+      \w (selection-up game)
+      \s (selection-down game)
+
       game)))
 
 (defn get-input [game screen]

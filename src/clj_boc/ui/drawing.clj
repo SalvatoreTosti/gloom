@@ -98,18 +98,23 @@
 
 (defn draw-item-list [screen line-count start-draw items]
   (->> items
-      (vals)
       (drop start-draw)
-      (map :name)
       (draw-string-list screen)))
 
+(defn draw-list [ui game screen]
+  (draw-item-list screen 0 0 (:list ui))
+  (s/move-cursor screen 0 (:selection ui)))
+
 (defmethod draw-ui :inventory [ui game screen]
-  (let [inv (get-in game [:world :entities :player :inventory])]
-    (draw-item-list screen 0 0 inv)))
+  (let [inv (get-in game [:world :entities :player :inventory])
+        items (vals inv)
+        items (map :name items)
+        new-ui (assoc ui :list items)]
+    (draw-list new-ui game screen)))
 
 (defmethod draw-ui :spell [ui game screen]
   (let [lst ["first", "second", "third"]]
-    (draw-string-list screen lst)))
+    (draw-list (assoc ui :list lst) game screen)))
 
 (defn draw-game [game screen]
   (clear-screen screen)
