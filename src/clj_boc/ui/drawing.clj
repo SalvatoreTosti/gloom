@@ -1,6 +1,7 @@
 (ns clj-boc.ui.drawing
   (:use [clj-boc.utils :only [enumerate]]
-        [clj-boc.entities.aspects.leveler :only [nearest-threshold]])
+        [clj-boc.entities.aspects.leveler :only [nearest-threshold]]
+        [clj-boc.ui.entities.menu :only [draw-menu]])
   (:require [lanterna.screen :as s]))
 
 (def screen-size [80 24])
@@ -105,16 +106,14 @@
   (draw-item-list screen 0 0 (:list ui))
   (s/move-cursor screen 0 (:selection ui)))
 
+(defmethod draw-ui :menu [ui game screen]
+  (draw-menu ui game screen))
+
 (defmethod draw-ui :inventory [ui game screen]
-  (let [inv (get-in game [:world :entities :player :inventory])
-        items (vals inv)
-        items (map :name items)
-        new-ui (assoc ui :list items)]
-    (draw-list new-ui game screen)))
+  (draw-menu ui game screen))
 
 (defmethod draw-ui :spell [ui game screen]
-  (let [lst ["first", "second", "third"]]
-    (draw-list (assoc ui :list lst) game screen)))
+  (draw-menu ui game screen))
 
 (defn draw-game [game screen]
   (clear-screen screen)

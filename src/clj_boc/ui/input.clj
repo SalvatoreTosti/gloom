@@ -4,7 +4,9 @@
         [clj-boc.entities.player :only [make-player move-player]]
         [clj-boc.entities.lichen :only [make-lichen]]
         [clj-boc.entities.bunny :only [make-bunny]]
-        [clj-boc.entities.apple :only [make-apple]])
+        [clj-boc.entities.apple :only [make-apple]]
+        [clj-boc.ui.entities.menu :only [->Menu make-menu make-inventory-menu]]
+        [clj-boc.ui.entities.aspects.selection :only [up down]])
   (:require [lanterna.screen :as s]))
 
 (defn move [[x y] [dx dy]]
@@ -53,12 +55,10 @@
     :enter (assoc game :uis [(->UI :win)])
     :backspace (assoc game :uis [(->UI :lose)])
     \n (-> game
-           (assoc :uis [(->UI :inventory)])
-           (initalize-selection)
+           (assoc :uis [(make-inventory-menu game)])
            (skip-tick))
     \x (-> game
-           (assoc :uis [(->UI :spell)])
-           (initalize-selection)
+           (assoc :uis [(make-menu :menu (list "a" "b" "c"))])
            (skip-tick))
 
     \q (assoc game :uis [])
@@ -93,20 +93,23 @@
 (defmethod process-input :inventory [game input]
   (let [game (skip-tick game)]
     (case input
+
       \n (assoc game :uis [(->UI :play)])
 
       \w (selection-up game)
       \s (selection-down game)
 
       game)))
-
-(defmethod process-input :spell [game input]
-  (let [game (skip-tick game)]
+ 
+(defmethod process-input :menu [game input]
+  (let [game (skip-tick game)
+        ui (first (:uis game))]
+    (println "in process input")
     (case input
-      \x (assoc game :uis [(->UI :play)])
+      :escape (assoc game :uis [(->UI :play)])
 
-      \w (selection-up game)
-      \s (selection-down game)
+      \w (up ui game)
+      \s (down ui game)
 
       game)))
 
