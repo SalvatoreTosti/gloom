@@ -6,17 +6,23 @@
   (up [this game]
       (let [current-UI (first (:uis game))
             new-UI (update current-UI :selection dec)]
-        (assoc game :uis [new-UI])))
+        (if (pos? (:selection current-UI))
+          (assoc game :uis [new-UI])
+          game)))
   (down [this game]
         (let [current-UI (first (:uis game))
               new-UI (update current-UI :selection inc)]
-          (assoc game :uis [new-UI])))
+          (if (< (:selection current-UI) (dec (count (:items current-UI))))
+            (assoc game :uis [new-UI])
+            game)))
 
   (select [this game]
           (let [current-UI (first (:uis game))
-                selection (current-UI :selection)
-                coll (:items this)]
+                selection (:selection current-UI)
+                items (:items this)]
             (when (and
                     (not (neg? selection))
-                    (< selection (count coll)))
-              (nth coll selection)))))
+                    (< selection (count items)))
+              (nth items selection))
+
+                )))

@@ -6,7 +6,7 @@
         [clj-boc.entities.bunny :only [make-bunny]]
         [clj-boc.entities.apple :only [make-apple]]
         [clj-boc.ui.entities.menu :only [->Menu make-menu make-inventory-menu]]
-        [clj-boc.ui.entities.aspects.selection :only [up down]])
+        [clj-boc.ui.entities.aspects.selection :only [up down select]])
   (:require [lanterna.screen :as s]))
 
 (defn move [[x y] [dx dy]]
@@ -104,9 +104,11 @@
 (defmethod process-input :menu [game input]
   (let [game (skip-tick game)
         ui (first (:uis game))]
-    (println "in process input")
     (case input
       :escape (assoc game :uis [(->UI :play)])
+      :enter (do
+               (println (select ui game))
+               game)
 
       \w (up ui game)
       \s (down ui game)

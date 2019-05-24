@@ -62,3 +62,5 @@
                       (args ":text") :text
                       :else :auto)]
     (main screen-type true)))
+
+(-main ":swing")
