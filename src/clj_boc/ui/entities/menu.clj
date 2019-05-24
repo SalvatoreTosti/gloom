@@ -7,28 +7,27 @@
 (defrecord Menu [id kind header items selection])
 
 (defn make-menu
-  ([kind header items]
-  (map->Menu {:id (get-id)
-              :header header
-              :kind kind
-              :items items
-              :selection 0}))
-  ([kind items]
-   (make-menu kind nil items))
+  ([kind headers items]
+   (map->Menu {:id (get-id)
+               :headers headers
+               :kind kind
+               :items items
+               :selection 0}))
+  ([headers items]
+   (make-menu :menu headers items))
   ([items]
    (make-menu :menu nil items)))
 
-(defn draw-string-list [screen strings]
+(defn draw-string-list [screen start-offset strings]
   (dorun (for [x (range (count strings))]
-           (s/put-string screen 0 x (nth strings x)))))
+           (s/put-string screen 0 (+ x start-offset) (nth strings x)))))
 
-(defn draw-item-list [screen line-count start-draw items]
-  (->> items
-      (drop start-draw)
-      (draw-string-list screen)))
+(defn draw-item-list [screen line-count items headers]
+  (draw-string-list screen 0 headers)
+  (draw-string-list screen (count headers) items))
 
 (defn draw-menu [this game screen]
-  (draw-item-list screen 0 0 (:items this))
-  (s/move-cursor screen 0 (:selection this)))
+  (draw-item-list screen 0 (:items this) (:headers this))
+  (s/move-cursor screen 0 (+ (count (:headers this)) (:selection this))))
 
 (add-aspect Menu Selection)

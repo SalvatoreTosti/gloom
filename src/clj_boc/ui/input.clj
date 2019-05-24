@@ -54,7 +54,7 @@
     (let [inv (get-in game [:world :entities :player :inventory])
           items (vals inv)
           items (map :name items)]
-  (make-menu items)))
+  (make-menu ["Inventory"] items)))
 
 (defmethod process-input :play [game input]
   (case input
@@ -64,7 +64,7 @@
            (assoc :uis [(make-inventory-menu game)])
            (skip-tick))
     \x (-> game
-           (assoc :uis [(make-menu (list "a" "b" "c"))])
+           (assoc :uis [(make-menu ["Spells"] ["a" "b" "c"])])
            (skip-tick))
 
     \q (assoc game :uis [])
