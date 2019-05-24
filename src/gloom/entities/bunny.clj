@@ -1,8 +1,8 @@
-(ns clj-boc.entities.bunny
-  (:use [clj-boc.entities.core :only [Entity get-id add-aspect]]
-        [clj-boc.entities.aspects.mobile :only [Mobile move can-move?]]
-        [clj-boc.entities.aspects.destructible :only [Destructible]]
-        [clj-boc.world :only [find-empty-tile find-empty-neighbor]]))
+(ns gloom.entities.bunny
+  (:use [gloom.entities.core :only [Entity get-id add-aspect]]
+        [gloom.entities.aspects.mobile :only [Mobile move can-move?]]
+        [gloom.entities.aspects.destructible :only [Destructible]]
+        [gloom.world :only [find-empty-tile find-empty-neighbor]]))
 
 
 (defrecord Bunny [id glyph color location max-hp hp name])

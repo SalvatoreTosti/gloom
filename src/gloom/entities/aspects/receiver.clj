@@ -1,6 +1,6 @@
-(ns clj-boc.entities.aspects.receiver
-  (:use [clj-boc.entities.core :only [defaspect]]
-        [clj-boc.world :only [get-entities-around]]))
+(ns gloom.entities.aspects.receiver
+  (:use [gloom.entities.core :only [defaspect]]
+        [gloom.world :only [get-entities-around]]))
 
 (defaspect Receiver
   (receive-message [this message world]

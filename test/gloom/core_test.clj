@@ -1,6 +1,6 @@
-(ns clj-boc.core-test
+(ns gloom.core-test
   (:require [clojure.test :refer :all]
-            [clj-boc.core :refer :all]))
+            [gloom.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

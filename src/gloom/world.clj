@@ -1,6 +1,6 @@
-(ns clj-boc.world
-  (:use [clj-boc.coordinates :only [neighbors]]
-        [clj-boc.utils :only [abs]]))
+(ns gloom.world
+  (:use [gloom.coordinates :only [neighbors]]
+        [gloom.utils :only [abs]]))
 
 (def world-size [160 50])
 

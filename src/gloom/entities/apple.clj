@@ -1,6 +1,6 @@
-(ns clj-boc.entities.apple
-  (:use [clj-boc.entities.core :only [Entity get-id add-aspect]]
-        [clj-boc.entities.aspects.item :only [Item drop-it]]))
+(ns gloom.entities.apple
+  (:use [gloom.entities.core :only [Entity get-id add-aspect]]
+        [gloom.entities.aspects.item :only [Item drop-it]]))
 
 (defrecord Apple [id glyph color location name])
 

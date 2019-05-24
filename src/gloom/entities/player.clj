@@ -1,16 +1,16 @@
-(ns clj-boc.entities.player
-  (:use [clj-boc.entities.core :only [Entity add-aspect]]
-        [clj-boc.entities.aspects.mobile :only [Mobile move can-move?]]
-        [clj-boc.entities.aspects.digger :only [Digger dig can-dig?]]
-        [clj-boc.entities.aspects.destructible :only [Destructible]]
-        [clj-boc.entities.aspects.attacker :only [Attacker attack]]
-        [clj-boc.entities.aspects.receiver :only [Receiver]]
-        [clj-boc.entities.aspects.leveler :only [Leveler add-exp]]
-        [clj-boc.entities.aspects.item :only [Item pick-up]]
+(ns gloom.entities.player
+  (:use [gloom.entities.core :only [Entity add-aspect]]
+        [gloom.entities.aspects.mobile :only [Mobile move can-move?]]
+        [gloom.entities.aspects.digger :only [Digger dig can-dig?]]
+        [gloom.entities.aspects.destructible :only [Destructible]]
+        [gloom.entities.aspects.attacker :only [Attacker attack]]
+        [gloom.entities.aspects.receiver :only [Receiver]]
+        [gloom.entities.aspects.leveler :only [Leveler add-exp]]
+        [gloom.entities.aspects.item :only [Item pick-up]]
 
 
-        [clj-boc.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
-        [clj-boc.coordinates :only [destination-coords]]))
+        [gloom.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
+        [gloom.coordinates :only [destination-coords]]))
 
 (defrecord Player [id glyph color location max-hp hp attack exp])
 

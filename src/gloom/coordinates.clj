@@ -1,4 +1,4 @@
-(ns clj-boc.coordinates)
+(ns gloom.coordinates)
 
 (def directions
   {:w  [-1 0]

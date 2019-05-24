@@ -1,6 +1,6 @@
-(ns clj-boc.ui.entities.menu
-  (:use [clj-boc.entities.core :only [Entity get-id add-aspect]]
-        [clj-boc.ui.entities.aspects.selection :only [Selection]])
+(ns gloom.ui.entities.menu
+  (:use [gloom.entities.core :only [Entity get-id add-aspect]]
+        [gloom.ui.entities.aspects.selection :only [Selection]])
   (:require [lanterna.screen :as s]))
 
 

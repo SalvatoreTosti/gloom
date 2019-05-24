@@ -1,7 +1,7 @@
-(ns clj-boc.entities.aspects.attacker
-  (:use [clj-boc.entities.core :only [defaspect]]
-        [clj-boc.entities.aspects.destructible :only [Destructible take-damage defense-value]]
-        [clj-boc.entities.aspects.receiver :only [send-message]]))
+(ns gloom.entities.aspects.attacker
+  (:use [gloom.entities.core :only [defaspect]]
+        [gloom.entities.aspects.destructible :only [Destructible take-damage defense-value]]
+        [gloom.entities.aspects.receiver :only [send-message]]))
 
 (declare get-damage)
 

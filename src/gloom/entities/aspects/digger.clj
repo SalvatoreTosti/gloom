@@ -1,6 +1,6 @@
-(ns clj-boc.entities.aspects.digger
-    (:use [clj-boc.entities.core :only [defaspect]]
-          [clj-boc.world :only [set-tile-floor check-tile]]))
+(ns gloom.entities.aspects.digger
+    (:use [gloom.entities.core :only [defaspect]]
+          [gloom.world :only [set-tile-floor check-tile]]))
 
 (defaspect Digger
   (dig [this dest world]

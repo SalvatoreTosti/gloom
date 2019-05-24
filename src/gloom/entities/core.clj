@@ -1,4 +1,4 @@
-(ns clj-boc.entities.core)
+(ns gloom.entities.core)
 
 (def ids (ref 0))
 

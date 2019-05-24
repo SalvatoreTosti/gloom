@@ -1,7 +1,7 @@
-(ns clj-boc.ui.drawing
-  (:use [clj-boc.utils :only [enumerate]]
-        [clj-boc.entities.aspects.leveler :only [nearest-threshold]]
-        [clj-boc.ui.entities.menu :only [draw-menu]])
+(ns gloom.ui.drawing
+  (:use [gloom.utils :only [enumerate]]
+        [gloom.entities.aspects.leveler :only [nearest-threshold]]
+        [gloom.ui.entities.menu :only [draw-menu]])
   (:require [lanterna.screen :as s]))
 
 (def screen-size [80 24])

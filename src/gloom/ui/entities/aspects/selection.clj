@@ -1,5 +1,5 @@
-(ns clj-boc.ui.entities.aspects.selection
-  (:use [clj-boc.entities.core :only [defaspect]])
+(ns gloom.ui.entities.aspects.selection
+  (:use [gloom.entities.core :only [defaspect]])
   (:require [lanterna.screen :as s]))
 
 (defaspect Selection

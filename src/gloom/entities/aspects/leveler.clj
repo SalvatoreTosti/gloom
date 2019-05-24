@@ -1,5 +1,5 @@
-(ns clj-boc.entities.aspects.leveler
-  (:use [clj-boc.entities.core :only [defaspect]]))
+(ns gloom.entities.aspects.leveler
+  (:use [gloom.entities.core :only [defaspect]]))
 
 (def thresholds
   [100,

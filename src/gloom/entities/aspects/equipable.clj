@@ -1,6 +1,6 @@
-(ns clj-boc.entities.aspects.equipable
-    (:use [clj-boc.entities.core :only [defaspect]]))
-;;           [clj-boc.world :only [set-tile-floor check-tile]]))
+(ns gloom.entities.aspects.equipable
+    (:use [gloom.entities.core :only [defaspect]]))
+;;           [gloom.world :only [set-tile-floor check-tile]]))
 
 (defaspect Equipable
   (equip [this target world]

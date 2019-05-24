@@ -1,8 +1,8 @@
-(ns clj-boc.entities.lichen
-  (:use [clj-boc.entities.core :only [Entity get-id add-aspect]]
-        [clj-boc.entities.aspects.destructible :only [Destructible]]
-        [clj-boc.entities.aspects.receiver :only [send-message-nearby]]
-        [clj-boc.world :only [find-empty-neighbor]]))
+(ns gloom.entities.lichen
+  (:use [gloom.entities.core :only [Entity get-id add-aspect]]
+        [gloom.entities.aspects.destructible :only [Destructible]]
+        [gloom.entities.aspects.receiver :only [send-message-nearby]]
+        [gloom.world :only [find-empty-neighbor]]))
 
 (defrecord Lichen [id glyph color location max-hp hp name])
 

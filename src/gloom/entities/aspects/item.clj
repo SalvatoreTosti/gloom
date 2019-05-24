@@ -1,5 +1,5 @@
-(ns clj-boc.entities.aspects.item
-  (:use [clj-boc.entities.core :only [defaspect]]))
+(ns gloom.entities.aspects.item
+  (:use [gloom.entities.core :only [defaspect]]))
 
 (defaspect Item
   (drop-it [this holder world]

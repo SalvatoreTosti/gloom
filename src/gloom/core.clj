@@ -1,9 +1,9 @@
-(ns clj-boc.core
-  (:use [clj-boc.world :only [random-world smooth-world]]
-        [clj-boc.ui.drawing :only [draw-game]]
-        [clj-boc.ui.input :only [get-input process-input]]
-        [clj-boc.ui.core :only [->UI]]
-        [clj-boc.entities.core :only [tick]])
+(ns gloom.core
+  (:use [gloom.world :only [random-world smooth-world]]
+        [gloom.ui.drawing :only [draw-game]]
+        [gloom.ui.input :only [get-input process-input]]
+        [gloom.ui.core :only [->UI]]
+        [gloom.entities.core :only [tick]])
   (:require [lanterna.screen :as s]))
 
 (defrecord Game [world uis input tick-skip])

@@ -1,6 +1,6 @@
-(ns clj-boc.entities.aspects.mobile
-  (:use [clj-boc.world :only [is-empty?]]
-        [clj-boc.entities.core :only [defaspect]]))
+(ns gloom.entities.aspects.mobile
+  (:use [gloom.world :only [is-empty?]]
+        [gloom.entities.core :only [defaspect]]))
 
 (defaspect Mobile
   (move [this dest world]

@@ -1,12 +1,12 @@
-(ns clj-boc.ui.input
-  (:use [clj-boc.world :only [random-world smooth-world find-empty-tile]]
-        [clj-boc.ui.core :only [->UI]]
-        [clj-boc.entities.player :only [make-player move-player]]
-        [clj-boc.entities.lichen :only [make-lichen]]
-        [clj-boc.entities.bunny :only [make-bunny]]
-        [clj-boc.entities.apple :only [make-apple]]
-        [clj-boc.ui.entities.menu :only [->Menu make-menu]]
-        [clj-boc.ui.entities.aspects.selection :only [up down select]])
+(ns gloom.ui.input
+  (:use [gloom.world :only [random-world smooth-world find-empty-tile]]
+        [gloom.ui.core :only [->UI]]
+        [gloom.entities.player :only [make-player move-player]]
+        [gloom.entities.lichen :only [make-lichen]]
+        [gloom.entities.bunny :only [make-bunny]]
+        [gloom.entities.apple :only [make-apple]]
+        [gloom.ui.entities.menu :only [make-menu]]
+        [gloom.ui.entities.aspects.selection :only [up down select]])
   (:require [lanterna.screen :as s]))
 
 (defn move [[x y] [dx dy]]

@@ -1,5 +1,5 @@
-(ns clj-boc.entities.aspects.destructible
-  (:use [clj-boc.entities.core :only [defaspect]]))
+(ns gloom.entities.aspects.destructible
+  (:use [gloom.entities.core :only [defaspect]]))
 
 (defaspect Destructible
   (take-damage [{:keys [id] :as this} damage world]

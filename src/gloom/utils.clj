@@ -1,4 +1,4 @@
-(ns clj-boc.utils)
+(ns gloom.utils)
 
 
 (defn abs [i]
