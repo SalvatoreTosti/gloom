@@ -9,6 +9,7 @@
         (if (pos? (:selection current-UI))
           (assoc game :uis [new-UI])
           game)))
+
   (down [this game]
         (let [current-UI (first (:uis game))
               new-UI (update current-UI :selection inc)]
@@ -23,6 +24,4 @@
             (when (and
                     (not (neg? selection))
                     (< selection (count items)))
-              (nth items selection))
-
-                )))
+              (nth items selection)))))

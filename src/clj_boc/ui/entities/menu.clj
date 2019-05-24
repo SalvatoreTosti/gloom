@@ -12,13 +12,6 @@
               :items items
               :selection 0}))
 
-(defn make-inventory-menu [game]
-    (let [inv (get-in game [:world :entities :player :inventory])
-          items (vals inv)
-          items (map :name items)]
-      (println items)
-  (make-menu :inventory items)))
-
 (defn draw-string-list [screen strings]
   (dorun (for [x (range (count strings))]
            (s/put-string screen 0 x (nth strings x)))))

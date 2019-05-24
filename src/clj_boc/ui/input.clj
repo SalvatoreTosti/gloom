@@ -5,7 +5,7 @@
         [clj-boc.entities.lichen :only [make-lichen]]
         [clj-boc.entities.bunny :only [make-bunny]]
         [clj-boc.entities.apple :only [make-apple]]
-        [clj-boc.ui.entities.menu :only [->Menu make-menu make-inventory-menu]]
+        [clj-boc.ui.entities.menu :only [->Menu make-menu]]
         [clj-boc.ui.entities.aspects.selection :only [up down select]])
   (:require [lanterna.screen :as s]))
 
@@ -50,6 +50,12 @@
         new-ui (assoc ui :selection 0)]
     (assoc game :uis [new-ui])))
 
+(defn make-inventory-menu [game]
+    (let [inv (get-in game [:world :entities :player :inventory])
+          items (vals inv)
+          items (map :name items)]
+  (make-menu :menu items)))
+
 (defmethod process-input :play [game input]
   (case input
     :enter (assoc game :uis [(->UI :win)])
@@ -90,17 +96,6 @@
         new-UI (update current-UI :selection inc)]
     (assoc game :uis [new-UI])))
 
-(defmethod process-input :inventory [game input]
-  (let [game (skip-tick game)]
-    (case input
-
-      \n (assoc game :uis [(->UI :play)])
-
-      \w (selection-up game)
-      \s (selection-down game)
-
-      game)))
- 
 (defmethod process-input :menu [game input]
   (let [game (skip-tick game)
         ui (first (:uis game))]
