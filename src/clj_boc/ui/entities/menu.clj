@@ -4,13 +4,19 @@
   (:require [lanterna.screen :as s]))
 
 
-(defrecord Menu [id kind items selection])
+(defrecord Menu [id kind header items selection])
 
-(defn make-menu [kind items]
+(defn make-menu
+  ([kind header items]
   (map->Menu {:id (get-id)
+              :header header
               :kind kind
               :items items
               :selection 0}))
+  ([kind items]
+   (make-menu kind nil items))
+  ([items]
+   (make-menu :menu nil items)))
 
 (defn draw-string-list [screen strings]
   (dorun (for [x (range (count strings))]
