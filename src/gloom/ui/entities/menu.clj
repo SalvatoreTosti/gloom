@@ -26,8 +26,8 @@
   (draw-string-list screen 0 headers)
   (draw-string-list screen (count headers) items))
 
-(defn draw-menu [this game screen]
-  (draw-item-list screen 0 (:items this) (:headers this))
-  (s/move-cursor screen 0 (+ (count (:headers this)) (:selection this))))
+(defn draw-menu [{:keys [items headers selection] :as this} game screen]
+  (draw-item-list screen 0 items headers)
+  (s/move-cursor screen 0 (+ (count headers) selection)))
 
 (add-aspect Menu Selection)

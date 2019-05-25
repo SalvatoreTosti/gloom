@@ -76,7 +76,7 @@
   (assoc-in world [:tiles y x] tile))
 
 (defn set-tile-floor [world coord]
-(set-tile world coord (:floor tiles)))
+  (set-tile world coord (:floor tiles)))
 
 (defn get-entity-at [world coord]
   (first (filter #(= coord (:location %))

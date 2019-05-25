@@ -29,11 +29,11 @@
         (add-creatures make-apple 30))))
 
 (defn reset-game [game]
-  (let [fresh-world (random-world)]
     (-> game
-        (assoc :world fresh-world)
-        (update-in [:world] populate-world)
-        (assoc :uis [(->UI :play)]))))
+        (assoc :world (random-world))
+        (update :world populate-world)
+        (pop-ui)
+        (push-ui (->UI :play))))
 
 (defn skip-tick [game]
   (assoc game :skip-tick true))
@@ -46,10 +46,11 @@
   (reset-game game))
 
 (defn make-inventory-menu [game]
-    (let [inv (get-in game [:world :entities :player :inventory])
-          items (vals inv)
-          items (map :name items)]
-  (make-menu ["Inventory"] items)))
+  (let [inv (get-in game [:world :entities :player :inventory])]
+    (->> inv
+         (vals)
+         (map :name)
+         (make-menu ["Inventory"]))))
 
 (defmethod process-input :play [game input]
   (case input
@@ -85,7 +86,7 @@
   (let [game (skip-tick game)
         ui (last (:uis game))]
     (case input
-      :escape (pop-ui game);;(assoc game :uis [(->UI :play)])
+      :escape (pop-ui game)
       :enter (do
                (println (select ui game))
                game)
