@@ -107,6 +107,7 @@
   (s/move-cursor screen 0 (:selection ui)))
 
 (defmethod draw-ui :menu [ui game screen]
+  (clear-screen screen)
   (draw-menu ui game screen))
 
 (defn draw-game [game screen]

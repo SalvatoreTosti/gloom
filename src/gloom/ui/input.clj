@@ -1,6 +1,6 @@
 (ns gloom.ui.input
   (:use [gloom.world :only [random-world smooth-world find-empty-tile]]
-        [gloom.ui.core :only [->UI]]
+        [gloom.ui.core :only [->UI push-ui pop-ui]]
         [gloom.entities.player :only [make-player move-player]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
@@ -45,11 +45,6 @@
 (defmethod process-input :start [game input]
   (reset-game game))
 
-(defn initalize-selection [game]
-  (let [ui (first (:uis game))
-        new-ui (assoc ui :selection 0)]
-    (assoc game :uis [new-ui])))
-
 (defn make-inventory-menu [game]
     (let [inv (get-in game [:world :entities :player :inventory])
           items (vals inv)
@@ -61,10 +56,10 @@
     :enter (assoc game :uis [(->UI :win)])
     :backspace (assoc game :uis [(->UI :lose)])
     \n (-> game
-           (assoc :uis [(make-inventory-menu game)])
+           (push-ui (make-inventory-menu game))
            (skip-tick))
     \x (-> game
-           (assoc :uis [(make-menu ["Spells"] ["a" "b" "c"])])
+           (push-ui (make-menu ["Spells"] ["a" "b" "c"]))
            (skip-tick))
 
     \q (assoc game :uis [])
@@ -79,28 +74,18 @@
 (defmethod process-input :win [game input]
   (if (= input :escape)
     (assoc game :uis [])
-    (assoc game :uis [(->UI :start)])))
+    (push-ui game (->UI :start))))
 
 (defmethod process-input :lose [game input]
   (if (= input :escape)
     (assoc game :uis [])
-    (assoc game :uis [(->UI :start)])))
-
-(defn selection-up [game]
-  (let [current-UI (first (:uis game))
-        new-UI (update current-UI :selection dec)]
-    (assoc game :uis [new-UI])))
-
-(defn selection-down [game]
-  (let [current-UI (first (:uis game))
-        new-UI (update current-UI :selection inc)]
-    (assoc game :uis [new-UI])))
+    (push-ui game (->UI :start))))
 
 (defmethod process-input :menu [game input]
   (let [game (skip-tick game)
-        ui (first (:uis game))]
+        ui (last (:uis game))]
     (case input
-      :escape (assoc game :uis [(->UI :play)])
+      :escape (pop-ui game);;(assoc game :uis [(->UI :play)])
       :enter (do
                (println (select ui game))
                game)
