@@ -1,5 +1,7 @@
 # gloom
 
+![mushrooms](doc/mushrooms-256.png)
+
 Rougelike based on [Caves of Clojure](http://stevelosh.com/blog/2012/07/caves-of-clojure-01/#clojure-lanterna)
 
 
