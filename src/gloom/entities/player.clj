@@ -7,6 +7,8 @@
         [gloom.entities.aspects.receiver :only [Receiver]]
         [gloom.entities.aspects.leveler :only [Leveler add-exp]]
         [gloom.entities.aspects.item :only [Item pick-up]]
+        [gloom.entities.aspects.consumable :only [Consumable consume-world]]
+
 
 
         [gloom.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
@@ -40,7 +42,10 @@
         target (destination-coords (:location player) dir)
         entity-at-target (get-entity-at world target)]
     (cond
+      (satisfies? Consumable entity-at-target) (consume-world entity-at-target player world)
       (satisfies? Item entity-at-target) (pick-up entity-at-target player world)
+
+
       entity-at-target (attack player entity-at-target world)
       (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)

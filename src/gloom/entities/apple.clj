@@ -1,6 +1,7 @@
 (ns gloom.entities.apple
   (:use [gloom.entities.core :only [Entity get-id add-aspect]]
-        [gloom.entities.aspects.item :only [Item drop-it]]))
+        [gloom.entities.aspects.item :only [Item drop-it]]
+        [gloom.entities.aspects.consumable :only [Consumable]]))
 
 (defrecord Apple [id glyph color location name])
 
@@ -17,4 +18,6 @@
         world))
 
 (add-aspect Apple Item)
-
+(add-aspect Apple Consumable
+            (consume-effect [this consumer world]
+                            (update-in world [:entities (:id consumer) :hp] inc)))
