@@ -8,7 +8,7 @@ Rougelike based on [Caves of Clojure](http://stevelosh.com/blog/2012/07/caves-of
 ## Getting Started
 
 1. Clone the project
-2. Run the project via Leiningen using `lein run :swing`
+2. Run the project via Leiningen using `lein run :swing`. 
 You can use just `lein run`, but this mode has been less reliable for me.
 
 ### Prerequisites
@@ -21,7 +21,7 @@ Soon...
 
 ## Running the tests
 
-Test can be run with the `lein run` command.
+Test can be run with the `lein test` command.
 
 ## Deployment
 
