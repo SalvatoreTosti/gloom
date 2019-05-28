@@ -8,9 +8,6 @@
         [gloom.entities.aspects.leveler :only [Leveler add-exp]]
         [gloom.entities.aspects.item :only [Item pick-up]]
         [gloom.entities.aspects.consumable :only [Consumable consume-world]]
-
-
-
         [gloom.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
         [gloom.coordinates :only [destination-coords]]))
 
@@ -34,7 +31,6 @@
 (defn view-inventory [this]
   (get-in this [:inventory :name]))
 
-
 (add-aspect Player Mobile)
 
 (defn move-player [world dir]
@@ -44,7 +40,6 @@
     (cond
       (satisfies? Consumable entity-at-target) (consume-world entity-at-target player world)
       (satisfies? Item entity-at-target) (pick-up entity-at-target player world)
-
 
       entity-at-target (attack player entity-at-target world)
       (can-move? player target world) (move player target world)
