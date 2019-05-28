@@ -1,4 +1,4 @@
-(ns gloom.spells.effect
+(ns gloom.spells.effects.effect
   (:use [gloom.entities.aspects.receiver :only [send-message]]
         [gloom.entities.core :only [defaspect]]))
 

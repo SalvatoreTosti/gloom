@@ -1,5 +1,5 @@
-(ns gloom.spells.damage
-  (:use [gloom.spells.effect :only [Effect]]
+(ns gloom.spells.effects.damage
+  (:use [gloom.spells.effects.effect :only [Effect]]
         [gloom.entities.core :only [get-id add-aspect]]
         [gloom.entities.aspects.destructible :only [Destructible take-damage defense-value]]
         [gloom.entities.aspects.receiver :only [send-message]]))

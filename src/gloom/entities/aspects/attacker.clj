@@ -2,10 +2,8 @@
   (:use [gloom.entities.core :only [defaspect]]
         [gloom.entities.aspects.destructible :only [Destructible take-damage defense-value]]
         [gloom.entities.aspects.receiver :only [send-message]]
-        [gloom.spells.damage :only [make-damage]]
+        [gloom.spells.effects.damage :only [make-damage]]
         [gloom.spells.spell :only [trigger-spell make-spell]]))
-
-(declare get-damage)
 
 (defaspect Attacker
   (attack [this target world]

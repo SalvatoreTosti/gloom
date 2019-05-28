@@ -1,6 +1,6 @@
 (ns gloom.spells.spell
   (:use [gloom.entities.aspects.receiver :only [send-message]]
-        [gloom.spells.effect :only [trigger]]
+        [gloom.spells.effects.effect :only [trigger]]
         [gloom.entities.core :only [get-id add-aspect defaspect]]))
 
 (defrecord Spell [id name effects])
