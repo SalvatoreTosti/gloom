@@ -7,7 +7,7 @@
 (defrecord Menu [id kind header items selection])
 
 (defn item-mapping [item mapping]
-  [(first item) (get-in (second item) mapping)])
+  [(first item) (str (get-in (second item) mapping))])
 
 (defn pair-mapping [items mapping]
   (map #(item-mapping % mapping) items))
