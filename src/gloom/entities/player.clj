@@ -8,7 +8,8 @@
         [gloom.entities.aspects.leveler :only [Leveler add-exp]]
         [gloom.entities.aspects.item :only [Item pick-up]]
         [gloom.entities.aspects.consumable :only [Consumable consume-world]]
-        [gloom.world :only [find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
+        [gloom.world :only [find-empty-neighbor find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
+        [gloom.entities.spells.items :only [ItemInteraction pick-up-it drop-it]]
         [gloom.coordinates :only [destination-coords]]))
 
 (defrecord Player [id glyph color location max-hp hp attack exp])
@@ -38,15 +39,24 @@
         target (destination-coords (:location player) dir)
         entity-at-target (get-entity-at world target)]
     (cond
+      (satisfies? Item entity-at-target) (pick-up-it player entity-at-target world)
       (satisfies? Consumable entity-at-target) (consume-world entity-at-target player world)
-      (satisfies? Item entity-at-target) (pick-up entity-at-target player world)
 
       entity-at-target (attack player entity-at-target world)
       (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)
       :else world)))
 
+(defn drop-first-item [world]
+  (let [player (get-in world [:entities :player])
+        item-vec (first (:inventory player))
+        item (second item-vec)]
+  (drop-it player item (find-empty-neighbor world (:location player)) world)))
+
+
 (add-aspect Player Digger)
 (add-aspect Player Attacker)
 (add-aspect Player Receiver)
 (add-aspect Player Leveler)
+(add-aspect Player ItemInteraction)
+

@@ -1,7 +1,7 @@
 (ns gloom.ui.input
   (:use [gloom.world :only [random-world smooth-world find-empty-tile]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
-        [gloom.entities.player :only [make-player move-player]]
+        [gloom.entities.player :only [make-player move-player drop-first-item]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
         [gloom.entities.apple :only [make-apple]]
@@ -62,6 +62,8 @@
     \x (-> game
            (push-ui (make-menu ["Spells"] ["a" "b" "c"]))
            (skip-tick))
+
+    \z (update-in game [:world] drop-first-item)
 
     \q (assoc game :uis [])
 
