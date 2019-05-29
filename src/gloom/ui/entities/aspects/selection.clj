@@ -5,26 +5,23 @@
 
 (defaspect Selection
   (up [this game]
-      (let [current-UI (last (:uis game))
-            new-UI (update current-UI :selection dec)]
-        (if (pos? (:selection current-UI))
+      (let [new-UI (update this :selection dec)]
+        (if (pos? (:selection this))
           (-> game
               (pop-ui)
               (push-ui new-UI))
           game)))
 
   (down [this game]
-        (let [current-UI (last (:uis game))
-              new-UI (update current-UI :selection inc)]
-          (if (< (:selection current-UI) (dec (count (:items current-UI))))
+        (let [new-UI (update this :selection inc)]
+          (if (< (:selection this) (dec (count (:items this))))
             (-> game
                 (pop-ui)
                 (push-ui new-UI))
             game)))
 
   (select [this game]
-          (let [current-UI (first (:uis game))
-                selection (:selection current-UI)
+          (let [selection (:selection this)
                 items (:items this)]
             (when (and
                     (not (neg? selection))
