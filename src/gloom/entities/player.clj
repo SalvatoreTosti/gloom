@@ -4,13 +4,13 @@
         [gloom.entities.aspects.digger :only [Digger dig can-dig?]]
         [gloom.entities.aspects.destructible :only [Destructible]]
         [gloom.entities.aspects.attacker :only [Attacker attack]]
-        [gloom.entities.aspects.receiver :only [Receiver]]
+        [gloom.entities.aspects.receiver :only [Receiver send-message]]
         [gloom.entities.aspects.leveler :only [Leveler add-exp]]
         [gloom.entities.aspects.item :only [Item]]
         [gloom.entities.aspects.consumable :only [Consumable consume-world]]
         [gloom.world :only [find-empty-neighbor find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
         [gloom.entities.items :only [gather dump]]
-        [gloom.entities.aspects.container :only [fetch withdraw]]
+        [gloom.entities.aspects.container :only [fetch withdraw full?]]
         [gloom.coordinates :only [destination-coords]]))
 
 (defrecord Player [id glyph color location max-hp hp attack exp])
@@ -40,13 +40,18 @@
         target (destination-coords (:location player) dir)
         entity-at-target (get-entity-at world target)]
     (cond
-      (satisfies? Item entity-at-target) (gather world player entity-at-target)
+      (satisfies? Item entity-at-target) (pick-up-item world player entity-at-target)
       (satisfies? Consumable entity-at-target) (consume-world entity-at-target player world)
 
       entity-at-target (attack player entity-at-target world)
       (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)
       :else world)))
+
+(defn pick-up-item [world player item]
+  (if (full? (:inventory player))
+    (send-message player "You can't hold any more items!" nil world)
+    (gather world player item)))
 
 (defn drop-item [world id]
    (let [player (get-in world [:entities :player])
