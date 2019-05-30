@@ -1,11 +1,15 @@
 (ns gloom.ui.input
   (:use [gloom.world :only [random-world smooth-world find-empty-tile]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
-        [gloom.entities.player :only [make-player move-player drop-first-item drop-item]]
+        [gloom.entities.player :only [make-player move-player drop-item]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
         [gloom.entities.apple :only [make-apple]]
+        [gloom.entities.backpack :only [make-backpack]]
         [gloom.ui.entities.menu :only [make-menu]]
+        [gloom.entities.items :only [dump]]
+        [gloom.entities.player :only [drop-item]]
+
         [gloom.ui.entities.aspects.selection :only [up down select]])
   (:require [lanterna.screen :as s]))
 
@@ -26,12 +30,13 @@
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
-        (add-creatures make-apple 30))))
+        (add-creatures make-apple 300))))
 
 (defn reset-game [game]
     (-> game
         (assoc :world (random-world))
         (update :world populate-world)
+        (assoc-in [:world :entities :player :inventory] (make-backpack))
         (pop-ui)
         (push-ui (->UI :play))))
 
@@ -46,7 +51,7 @@
   (reset-game game))
 
 (defn make-inventory-menu [game]
-  (let [inv (get-in game [:world :entities :player :inventory])]
+  (let [inv (get-in game [:world :entities :player :inventory :items])]
     (make-menu ["Inventory"] inv [:name])))
 
 (defmethod process-input :play [game input]
@@ -60,7 +65,7 @@
            (push-ui (make-menu ["Spells"] {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name]))
            (skip-tick))
 
-    \z (update-in game [:world] drop-first-item)
+;;     \z (update-in game [:world] drop-first-item)
 
     \q (assoc game :uis [])
 
@@ -81,6 +86,7 @@
     (assoc game :uis [])
     (push-ui game (->UI :start))))
 
+
 (defmethod process-input :menu [game input]
   (let [game (skip-tick game)
         ui (last (:uis game))]
@@ -89,7 +95,7 @@
       :enter (let
                [id (select ui game)]
                (-> game
-                   (update-in  [:world] #(drop-item % id))
+                   (update-in [:world] #(drop-item % id))
                    (pop-ui)))
       \w (up ui game)
       \s (down ui game)
