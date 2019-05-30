@@ -47,16 +47,23 @@
       (can-dig? player target world) (dig player target world)
       :else world)))
 
+(add-aspect Player ItemInteraction)
+
+(defn drop-item [world item-id]
+  (let [player (get-in world [:entities :player])
+        inv (:inventory player)
+        zed (get inv item-id )
+        ]
+    (drop-it player (get inv item-id) (find-empty-neighbor world (:location player)) world)))
+
 (defn drop-first-item [world]
   (let [player (get-in world [:entities :player])
         item-vec (first (:inventory player))
         item (second item-vec)]
   (drop-it player item (find-empty-neighbor world (:location player)) world)))
 
-
 (add-aspect Player Digger)
 (add-aspect Player Attacker)
 (add-aspect Player Receiver)
 (add-aspect Player Leveler)
-(add-aspect Player ItemInteraction)
 

@@ -1,7 +1,7 @@
 (ns gloom.ui.input
   (:use [gloom.world :only [random-world smooth-world find-empty-tile]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
-        [gloom.entities.player :only [make-player move-player drop-first-item]]
+        [gloom.entities.player :only [make-player move-player drop-first-item drop-item]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
         [gloom.entities.apple :only [make-apple]]
@@ -86,10 +86,11 @@
         ui (last (:uis game))]
     (case input
       :escape (pop-ui game)
-      :enter (do
-               (println (select ui game))
-               game)
-
+      :enter (let
+               [id (select ui game)]
+               (-> game
+                   (update-in  [:world] #(drop-item % id))
+                   (pop-ui)))
       \w (up ui game)
       \s (down ui game)
 
