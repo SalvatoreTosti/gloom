@@ -52,7 +52,7 @@
 
 (defn make-inventory-menu [game]
   (let [inv (get-in game [:world :entities :player :inventory :items])]
-    (make-menu ["Inventory"] inv [:name])))
+    (make-menu :inventory ["Inventory"] inv [:name])))
 
 (defmethod process-input :play [game input]
   (case input
@@ -64,8 +64,6 @@
     \x (-> game
            (push-ui (make-menu ["Spells"] {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name]))
            (skip-tick))
-
-;;     \z (update-in game [:world] drop-first-item)
 
     \q (assoc game :uis [])
 
@@ -86,8 +84,21 @@
     (assoc game :uis [])
     (push-ui game (->UI :start))))
 
-
 (defmethod process-input :menu [game input]
+  (let [game (skip-tick game)
+        ui (last (:uis game))]
+    (case input
+      :escape (pop-ui game)
+      :enter (do
+               (println (select ui game))
+               (-> game
+                   (pop-ui)))
+      \w (up ui game)
+      \s (down ui game)
+
+      game)))
+
+(defmethod process-input :inventory [game input]
   (let [game (skip-tick game)
         ui (last (:uis game))]
     (case input

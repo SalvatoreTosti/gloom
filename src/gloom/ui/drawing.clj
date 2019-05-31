@@ -110,6 +110,10 @@
   (clear-screen screen)
   (draw-menu ui game screen))
 
+(defmethod draw-ui :inventory [ui game screen]
+  (clear-screen screen)
+  (draw-menu ui game screen))
+
 (defn draw-game [game screen]
   (clear-screen screen)
   (doseq [ui (:uis game)]

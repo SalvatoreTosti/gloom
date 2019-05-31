@@ -59,7 +59,7 @@
          item (fetch (:inventory player) id)]
      (if target
        (dump world player item target)
-       world)))
+       (send-message player "There's no room to drop the item!" nil world))))
 
 (add-aspect Player Digger)
 (add-aspect Player Attacker)
