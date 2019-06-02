@@ -34,6 +34,13 @@
 
 (def get-tiles (memoize get-tile-map))
 
+(defn draw-single-tile [tile-map item]
+  (let [x (first (:location item))
+        y (second (:location item))
+        image ((:tile item) tile-map)]
+     (when (q/loaded? image)
+        (q/image image (* x 16) (* 16 y)))))
+
 (def img (ref nil))
 
 (defn setup []
@@ -43,10 +50,8 @@
 (defn draw []
   (when (q/loaded? @img)
     (let [tiles (get-tiles @img 32 32)
-          test-tile (:195 tiles)]
-      (when (q/loaded? test-tile)
-        (q/image test-tile 0 0)))))
-
+          items [{:location [4 6] :tile :10} {:location [6 3] :tile :1001}]]
+      (doall (map #(draw-single-tile tiles %) items)))))
 
 (q/defsketch example
   :title "image demo"
