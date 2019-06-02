@@ -1,5 +1,6 @@
 (ns quil-drawing
-  (:require [quil.core :as q]))
+  (:require [quil.core :as q]
+            [quil.middleware :as m]))
 
 (defn- get-start [column-number]
   (+ (* column-number 16) column-number))
@@ -41,20 +42,28 @@
      (when (q/loaded? image)
         (q/image image (* x 16) (* 16 y)))))
 
-(def img (ref nil))
-
 (defn setup []
-  (q/background 0)
-  (dosync (ref-set img (q/load-image "resources/monochrome.png"))))
+  {:img (q/load-image "resources/monochrome.png") :counter 0})
 
-(defn draw []
-  (when (q/loaded? @img)
-    (let [tiles (get-tiles @img 32 32)
+(defn update [state]
+  (update-in state [:counter] inc))
+
+(defn key-pressed [state key-information]
+  (println key-information)
+  state)
+
+(defn draw [state]
+  (q/background 0)
+  (when (q/loaded? (:img state))
+    (let [tiles (get-tiles (:img state) 32 32)
           items [{:location [4 6] :tile :10} {:location [6 3] :tile :1001}]]
       (doall (map #(draw-single-tile tiles %) items)))))
 
 (q/defsketch example
   :title "image demo"
+  :size [256 256]
   :setup setup
+  :update update
   :draw draw
-  :size [256 256])
+  :key-pressed key-pressed
+  :middleware [m/fun-mode])
