@@ -69,6 +69,9 @@
 (defn get-tile [world coord]
   (get-tile-from-tiles (:tiles world) coord))
 
+(defn get-tile-by-coord [world coord]
+  (get-tile-from-tiles (:tiles world) coord))
+
 (defn get-tile-kind [world coord]
   (:kind (get-tile world coord)))
 

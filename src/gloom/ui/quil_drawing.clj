@@ -1,4 +1,9 @@
 (ns quil-drawing
+  (:use [gloom.ui.core :only [->UI]]
+        [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
+        [gloom.ui.core :only [->UI push-ui pop-ui]]
+        [gloom.entities.backpack :only [make-backpack]]
+        [gloom.core :only [new-game]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -18,7 +23,6 @@
                   (+ counter)
                   (str)
                   (keyword))
-
         tile (get-tile source-image counter row-number)
         accumulator (assoc accumulator tile-id tile)]
     (if
@@ -35,12 +39,7 @@
 
 (def get-tiles (memoize get-tile-map))
 
-(defn draw-single-tile [tile-map item]
-  (let [x (first (:location item))
-        y (second (:location item))
-        image ((:tile item) tile-map)]
-     (when (q/loaded? image)
-        (q/image image (* x 16) (* 16 y)))))
+(def tile-size 16)
 
 (def screen-size [80 24])
 
@@ -50,7 +49,7 @@
     (when (q/loaded? blank)
       (doall (for [x (range cols)
                    y (range rows)]
-               (q/image blank (* x 16) (* y 16)))))))
+               (q/image blank (* x tile-size) (* y tile-size)))))))
 
 (defn get-viewport-coords [game player-location vcols vrows]
   (let [location (:location game)
@@ -68,8 +67,123 @@
         start-y (- end-y vrows)]
         [start-x start-y end-x end-y]))
 
+(defn draw-single-tile
+  ([tile-map item]
+  (let [x (first (:location item))
+        y (second (:location item))
+        image ((:tile item) tile-map)]
+     (when (q/loaded? image)
+        (q/image image (* x tile-size) (* y tile-size)))))
+  ([tile-map id x y]
+   (let [image (id tile-map)]
+     (when (q/loaded? image)
+       (q/image image (* x tile-size) (* y tile-size))))))
+
+(defn draw-tile [x y image]
+  (when (q/loaded? image)
+    (q/image image (* x tile-size) (* y tile-size))))
+
+(defn draw-entity [start-x start-y tile-map {:keys [location tile]} item]
+  (let [[entity-x entity-y] location
+        x (- entity-x start-x)
+        y (- entity-y start-y)
+        image (tile tile-map)]
+    (draw-image x y image)))
+
+(defn draw-hud [game])
+;;   (let [hud-row (dec (second (s/get-size screen)))
+;;         player (get-in game [:world :entities :player])
+;;         {:keys [location hp max-hp exp]} player
+;;         [x y] location
+;;         info (str "hp: [" hp "/" max-hp "]")
+;;         info (str info " exp: [" exp " / " (nearest-threshold exp) "]")]
+;;     (s/put-string screen 0 hud-row info)))
+
+(defmulti draw-ui
+  (fn [ui game]
+    (:kind ui)))
+
+(defmethod draw-ui :start [ui game])
+
+(defn draw-messages [messages])
+;;   (doseq [[i msg] (enumerate messages)]
+;;     (s/put-string screen 0 i msg {:fg :black :bg :white})))
+
+(defmethod draw-ui :play [ui game]
+  (let [world (:world game)
+        {:keys [tiles entities]} world
+        player (:player entities)
+        [cols rows] screen-size
+        vcols cols
+        vrows (dec rows)
+        [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
+    (draw-world vrows vcols start-x start-y end-x end-y tiles)
+    (doseq [entity (vals entities)]
+      (draw-entity start-x start-y entity))
+    (draw-hud game)
+    (draw-messages (:messages player))))
+
+(defmethod draw-ui :win [ui game])
+;;   (s/put-string screen 0 0 "Congrats you win!")
+;;   (s/put-string screen 0 1 "Press any escape to exit, anything else to restart..."))
+
+(defmethod draw-ui :lose [ui game])
+;;   (s/put-string screen 0 0 "Better luck next time")
+;;   (s/put-string screen 0 1 "Press any escape to exit, anything else to restart..."))
+
+(defn draw-string-list [strings])
+;;   (dorun (for [x (range (count strings))]
+;;            (s/put-string screen 0 x (nth strings x)))))
+
+(defn draw-item-list [line-count start-draw items])
+;;   (->> items
+;;       (drop start-draw)
+;;       (draw-string-list screen)))
+
+(defn draw-list [ui game])
+;;   (draw-item-list screen 0 0 (:list ui))
+;;   (s/move-cursor screen 0 (:selection ui)))
+
+(defmethod draw-ui :menu [ui game])
+;;   (clear-screen)
+;;   (draw-menu ui game))
+
+(defmethod draw-ui :inventory [ui game])
+;;   (clear-screen screen)
+;;   (draw-menu ui game screen))
+
+(defn draw-game [game]
+  (clear-screen)
+  (doseq [ui (:uis game)]
+    (draw-ui ui game)))
+
+
+(defn reset-game [game]
+    (-> game
+        (assoc :world (random-world))
+;;         (update :world populate-world)
+        (assoc-in [:world :entities :player :inventory] (make-backpack))
+        (pop-ui)
+        (push-ui (->UI :play))))
+
+(defn tile-kind-lookup [kind]
+  (cond
+    (= kind :wall) :19
+    (= kind :floor) :3
+    :else 0))
+
 (defn setup []
-  {:img (q/load-image "resources/monochrome.png") :counter 0})
+    (q/background 0)
+
+  (let [game  (reset-game (new-game))
+        tiles (get-in game [:world :tiles])
+        base-image (q/load-image "resources/monochrome.png")]
+    (while (not (q/loaded? base-image))
+      (println "loading base image..."))
+    {:img base-image
+     :tile-map (get-tiles base-image 32 32)
+     :counter 0
+     :game game}))
 
 (defn update-quil [state]
   (update-in state [:counter] inc))
@@ -78,17 +192,24 @@
   (println key-information)
   state)
 
+(defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
+  (doseq [[vrow-idx mrow-idx] (map vector
+                                   (range 0 vrows)
+                                   (range start-y end-y))
+          :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
+    (doseq [vcol-idx (range vcols)
+            :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
+      (let [id (tile-kind-lookup kind)
+            img (id tile-map)]
+        (draw-single-tile tile-map id vcol-idx vrow-idx)))))
+
 (defn draw [state]
-  (q/background 0)
-  (when (q/loaded? (:img state))
-    (let [tiles (get-tiles (:img state) 32 32)
-          items [{:location [4 6] :tile :10} {:location [6 3] :tile :1001}]]
-      (clear-screen tiles)
-      (doall (map #(draw-single-tile tiles %) items)))))
+  (draw-world 24 80 0 0 80 24 (get-in state [:game :world :tiles]) (:tile-map state))
+)
 
 (q/defsketch example
   :title "image demo"
-  :size [256 256]
+  :size [720 384]
   :setup setup
   :update update-quil
   :draw draw
