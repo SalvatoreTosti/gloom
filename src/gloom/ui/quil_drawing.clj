@@ -7,6 +7,10 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
+(def tile-size 16)
+
+(def screen-size [80 24])
+
 (defn- get-start [column-number]
   (+ (* column-number 16) column-number))
 
@@ -39,10 +43,6 @@
 
 (def get-tiles (memoize get-tile-map))
 
-(def tile-size 16)
-
-(def screen-size [80 24])
-
 (defn clear-screen [tile-map]
   (let [[cols, rows] screen-size
         blank (:0 tile-map)]
@@ -50,36 +50,6 @@
       (doall (for [x (range cols)
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
-
-;; (defn draw-single-tile
-;;   ([tile-map item]
-;;   (let [x (first (:location item))
-;;         y (second (:location item))
-;;         image ((:tile item) tile-map)]
-;;      (when (q/loaded? image)
-;;         (q/image image (* x tile-size) (* y tile-size)))))
-;;   ([tile-map id x y]
-;;    (let [image (id tile-map)]
-;;      (when (q/loaded? image)
-;;        (q/image image (* x tile-size) (* y tile-size))))))
-
-
-
-(defn draw-entity [start-x start-y tile-map {:keys [location tile]} item]
-  (let [[entity-x entity-y] location
-        x (- entity-x start-x)
-        y (- entity-y start-y)
-        image (tile tile-map)]
-    (draw-image x y image)))
-
-(defn draw-hud [game])
-;;   (let [hud-row (dec (second (s/get-size screen)))
-;;         player (get-in game [:world :entities :player])
-;;         {:keys [location hp max-hp exp]} player
-;;         [x y] location
-;;         info (str "hp: [" hp "/" max-hp "]")
-;;         info (str info " exp: [" exp " / " (nearest-threshold exp) "]")]
-;;     (s/put-string screen 0 hud-row info)))
 
 (defmulti draw-ui
   (fn [ui game]
@@ -138,7 +108,6 @@
   (clear-screen)
   (doseq [ui (:uis game)]
     (draw-ui ui game)))
-
 
 (defn reset-game [game]
     (-> game
@@ -205,14 +174,12 @@
 
 (def tile-lookup-mem (memoize tile-lookup))
 
-(defn draw-tile [x y image]
-  (when (q/loaded? image)
-    (q/image image (* x tile-size) (* y tile-size))))
-
-(defn draw-single-tile
-  ([tile-map id x y]
-   (let [image (tile-lookup-mem id tile-map)]
-     (draw-tile x y image))))
+(defn draw-tile
+  ([x y image]
+   (when (q/loaded? image)
+     (q/image image (* x tile-size) (* y tile-size))))
+  ([x y tile-map id]
+     (draw-tile x y (tile-lookup-mem id tile-map))))
 
 (defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
   (doseq [[vrow-idx mrow-idx] (map vector
@@ -223,15 +190,74 @@
             :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
       (let [id (tile-kind-lookup kind)
             img (tile-lookup-mem id tile-map)]
-        (draw-single-tile tile-map id vcol-idx vrow-idx)
-        ))))
+        (draw-tile vcol-idx vrow-idx tile-map id)))))
+
+(defn character-to-id [id]
+  (case id
+    "a" :979
+    "b" :980
+    "c" :981
+    "d" :982
+    "e" :983
+    "f" :984
+    "g" :985
+    "h" :986
+    "i" :987
+    "j" :988
+    "k" :989
+    "l" :990
+    "m" :991
+    "n" :1011
+    "o" :1012
+    "p" :1013
+    "q" :1014
+    "r" :1015
+    "s" :1016
+    "t" :1017
+    "u" :1018
+    "v" :1019
+    "w" :1020
+    "x" :1021
+    "y" :1022
+    "z" :1023
+
+    "0" :947
+    "1" :948
+    "2" :949
+    "3" :950
+    "4" :951
+    "5" :952
+    "6" :953
+    "7" :954
+    "8" :955
+    "9" :956
+    ":" :957
+    "." :958
+    "%" :959
+
+    "?" :821
+    " " :0
+    :821))
+
+(defn draw-word-rec [x y tile-map ids]
+  (when (not (empty? ids))
+    (do
+      (draw-tile x y tile-map (first ids))
+      (draw-word-rec (inc x) y tile-map (rest ids)))))
+
+(defn draw-word [x y tile-map word]
+  (->> word
+       (map str)
+       (map character-to-id)
+       (draw-word-rec 0 0 tile-map)))
 
 (defn draw [state]
   (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
   (draw-world 24 80
               start-x start-y end-x end-y
               (get-in state [:game :world :tiles])
-              (:tile-map state))))
+              (:tile-map state)))
+  (draw-word 0 0 (:tile-map state) "yeah    ok?"))
 
 (q/defsketch example
   :title "image demo"
