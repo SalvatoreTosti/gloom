@@ -51,22 +51,19 @@
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
 
+;; (defn draw-single-tile
+;;   ([tile-map item]
+;;   (let [x (first (:location item))
+;;         y (second (:location item))
+;;         image ((:tile item) tile-map)]
+;;      (when (q/loaded? image)
+;;         (q/image image (* x tile-size) (* y tile-size)))))
+;;   ([tile-map id x y]
+;;    (let [image (id tile-map)]
+;;      (when (q/loaded? image)
+;;        (q/image image (* x tile-size) (* y tile-size))))))
 
-(defn draw-single-tile
-  ([tile-map item]
-  (let [x (first (:location item))
-        y (second (:location item))
-        image ((:tile item) tile-map)]
-     (when (q/loaded? image)
-        (q/image image (* x tile-size) (* y tile-size)))))
-  ([tile-map id x y]
-   (let [image (id tile-map)]
-     (when (q/loaded? image)
-       (q/image image (* x tile-size) (* y tile-size))))))
 
-(defn draw-tile [x y image]
-  (when (q/loaded? image)
-    (q/image image (* x tile-size) (* y tile-size))))
 
 (defn draw-entity [start-x start-y tile-map {:keys [location tile]} item]
   (let [[entity-x entity-y] location
@@ -158,7 +155,8 @@
     :else 0))
 
 (defn setup []
-    (q/background 0)
+  (q/background 0)
+  (q/frame-rate 15)
 
   (let [game  (reset-game (new-game))
         tiles (get-in game [:world :tiles])
@@ -173,17 +171,18 @@
      :y 20}))
 
 (defn update-quil [state]
-  (update-in state [:counter] inc))
+  (assoc state :pressed false))
 
 (defn key-pressed [state key-information]
-  (println key-information)
-  (println (:x state) (:y state))
+;;   (println key-information)
+;;   (println (:x state) (:y state))
+  (let [state (assoc state :pressed true)]
   (case (:key key-information)
     :w (update state :y dec)
     :a (update state :x dec)
     :s (update state :y inc)
     :d (update state :x inc)
-    state))
+    state)))
 
 (defn get-viewport-coords [game player-location vcols vrows]
   (let [location (:location game)
@@ -201,6 +200,20 @@
         start-y (- end-y vrows)]
         [start-x start-y end-x end-y]))
 
+(defn tile-lookup [id tile-map]
+  (id tile-map))
+
+(def tile-lookup-mem (memoize tile-lookup))
+
+(defn draw-tile [x y image]
+  (when (q/loaded? image)
+    (q/image image (* x tile-size) (* y tile-size))))
+
+(defn draw-single-tile
+  ([tile-map id x y]
+   (let [image (tile-lookup-mem id tile-map)]
+     (draw-tile x y image))))
+
 (defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
   (doseq [[vrow-idx mrow-idx] (map vector
                                    (range 0 vrows)
@@ -209,16 +222,16 @@
     (doseq [vcol-idx (range vcols)
             :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
       (let [id (tile-kind-lookup kind)
-            img (id tile-map)]
-        (draw-single-tile tile-map id vcol-idx vrow-idx)))))
+            img (tile-lookup-mem id tile-map)]
+        (draw-single-tile tile-map id vcol-idx vrow-idx)
+        ))))
 
 (defn draw [state]
   (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
   (draw-world 24 80
               start-x start-y end-x end-y
               (get-in state [:game :world :tiles])
-              (:tile-map state)))
-)
+              (:tile-map state))))
 
 (q/defsketch example
   :title "image demo"
