@@ -51,21 +51,6 @@
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
 
-(defn get-viewport-coords [game player-location vcols vrows]
-  (let [location (:location game)
-        [center-x center-y] player-location
-        tiles (:tiles (:world game))
-        map-rows (count tiles)
-        map-cols (count (first tiles))
-        start-x (max 0 (- center-x (int (/ vcols 2))))
-        start-y (max 0 (- center-y (int (/ vrows 2))))
-        end-x (+ start-x vcols)
-        end-x (min end-x map-cols)
-        end-y (+ start-y vrows)
-        end-y (min end-y map-rows)
-        start-x (- end-x vcols)
-        start-y (- end-y vrows)]
-        [start-x start-y end-x end-y]))
 
 (defn draw-single-tile
   ([tile-map item]
@@ -183,14 +168,38 @@
     {:img base-image
      :tile-map (get-tiles base-image 32 32)
      :counter 0
-     :game game}))
+     :game game
+     :x 40
+     :y 20}))
 
 (defn update-quil [state]
   (update-in state [:counter] inc))
 
 (defn key-pressed [state key-information]
   (println key-information)
-  state)
+  (println (:x state) (:y state))
+  (case (:key key-information)
+    :w (update state :y dec)
+    :a (update state :x dec)
+    :s (update state :y inc)
+    :d (update state :x inc)
+    state))
+
+(defn get-viewport-coords [game player-location vcols vrows]
+  (let [location (:location game)
+        [center-x center-y] player-location
+        tiles (:tiles (:world game))
+        map-rows (count tiles)
+        map-cols (count (first tiles))
+        start-x (max 0 (- center-x (int (/ vcols 2))))
+        start-y (max 0 (- center-y (int (/ vrows 2))))
+        end-x (+ start-x vcols)
+        end-x (min end-x map-cols)
+        end-y (+ start-y vrows)
+        end-y (min end-y map-rows)
+        start-x (- end-x vcols)
+        start-y (- end-y vrows)]
+        [start-x start-y end-x end-y]))
 
 (defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
   (doseq [[vrow-idx mrow-idx] (map vector
@@ -204,7 +213,11 @@
         (draw-single-tile tile-map id vcol-idx vrow-idx)))))
 
 (defn draw [state]
-  (draw-world 24 80 0 0 80 24 (get-in state [:game :world :tiles]) (:tile-map state))
+  (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
+  (draw-world 24 80
+              start-x start-y end-x end-y
+              (get-in state [:game :world :tiles])
+              (:tile-map state)))
 )
 
 (q/defsketch example
