@@ -10,7 +10,7 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-(def screen-size [80 24])
+(def screen-size [45 24])
 
 (defn clear-screen [tile-map]
   (let [[cols, rows] screen-size
@@ -37,8 +37,10 @@
         end-y (+ start-y vrows)
         end-y (min end-y map-rows)
         start-x (- end-x vcols)
-        start-y (- end-y vrows)]
-        [start-x start-y end-x end-y]))
+        start-y (- end-y vrows)
+        ]
+    [start-x start-y end-x end-y]))
+
 
 (defn tile-kind-lookup [kind]
   (cond
@@ -57,7 +59,7 @@
         x (- x start-x)
         y (- y start-y)
         img ((:image entity) tile-map)]
-    (println x y)
+;;     (println x y)
 ;;     (draw-tile x y img)
 ;;     (println x y)
 ;;     (draw-word x y tile-map "y")
@@ -157,7 +159,7 @@
 
 (q/defsketch example
   :title "image demo"
-  :size [720 384]
+  :size [(* (first screen-size) tile-size) (* (second screen-size) tile-size)]
   :setup setup
   :draw draw
   :key-pressed key-pressed
