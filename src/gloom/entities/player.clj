@@ -5,14 +5,14 @@
         [gloom.entities.aspects.destructible :only [Destructible]]
         [gloom.entities.aspects.attacker :only [Attacker attack]]
         [gloom.entities.aspects.receiver :only [Receiver send-message]]
-        [gloom.entities.aspects.renderable :only [Renderable]]
         [gloom.entities.aspects.leveler :only [Leveler add-exp]]
         [gloom.entities.aspects.item :only [Item]]
         [gloom.entities.aspects.consumable :only [Consumable consume-world]]
         [gloom.world :only [find-empty-neighbor find-empty-tile get-tile-kind set-tile-floor is-empty? get-entity-at]]
         [gloom.entities.items :only [gather dump]]
         [gloom.entities.aspects.container :only [fetch withdraw full?]]
-        [gloom.coordinates :only [destination-coords]]))
+        [gloom.coordinates :only [destination-coords]]
+        [gloom.entities.aspects.renderable :only [Renderable]]))
 
 (defrecord Player [id glyph color location max-hp hp attack exp image])
 

@@ -123,7 +123,7 @@
         player (:player entities)
         [cols rows] screen-size
         vcols cols
-        vrows (dec rows)
+        vrows rows
         [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
   (draw-world
     vrows
