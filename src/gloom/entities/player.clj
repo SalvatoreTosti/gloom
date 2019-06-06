@@ -5,6 +5,7 @@
         [gloom.entities.aspects.destructible :only [Destructible]]
         [gloom.entities.aspects.attacker :only [Attacker attack]]
         [gloom.entities.aspects.receiver :only [Receiver send-message]]
+        [gloom.entities.aspects.renderable :only [Renderable]]
         [gloom.entities.aspects.leveler :only [Leveler add-exp]]
         [gloom.entities.aspects.item :only [Item]]
         [gloom.entities.aspects.consumable :only [Consumable consume-world]]
@@ -24,8 +25,7 @@
                  :max-hp 10
                  :hp 10
                  :attack 2
-                 :exp 0
-                 :image :31}))
+                 :exp 0}))
 
 (extend-type Player Entity
   (tick [this world]
@@ -66,4 +66,8 @@
 (add-aspect Player Attacker)
 (add-aspect Player Receiver)
 (add-aspect Player Leveler)
-
+(add-aspect Player Renderable
+            (color [this]
+                   [99 240 66])
+            (image [this]
+                   :31))

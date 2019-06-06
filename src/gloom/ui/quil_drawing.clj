@@ -6,7 +6,9 @@
         [gloom.core :only [new-game]]
         [gloom.ui.quil-setup :only [setup]]
         [gloom.ui.quil-key :only [key-pressed]]
-        [gloom.ui.quil-text :only [draw-word]])
+        [gloom.ui.quil-text :only [draw-word]]
+        [gloom.entities.aspects.renderable :only [color image]]
+        )
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -57,13 +59,8 @@
 (defn draw-entity [start-x start-y entity tile-map]
   (let [[x y] (:location entity)
         x (- x start-x)
-        y (- y start-y)
-        img ((:image entity) tile-map)]
-;;     (println x y)
-;;     (draw-tile x y img)
-;;     (println x y)
-;;     (draw-word x y tile-map "y")
-    (draw-tile x y img)))
+        y (- y start-y)]
+    (draw-tile x y (image entity) tile-map (color entity))))
 
 (defn draw-world [vrows vcols start-x start-y end-x end-y tiles entities tile-map]
   (doseq [[vrow-idx mrow-idx] (map vector
@@ -77,8 +74,6 @@
 
     (doseq [entity (vals entities)]
       (draw-entity start-x start-y entity tile-map))
-;;       (draw-tile (first (:location entity)) (second (:location entity)) tile-map (:image entity))))
-;;       (draw-entity entity tile-map)))
 ;;     (draw-hud game)
 ;;     (draw-messages (:messages player))))
   )
@@ -130,14 +125,16 @@
         vcols cols
         vrows (dec rows)
         [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
-
-;;     (draw-world vrows vcols start-x start-y end-x end-y tiles)
-
-  (draw-world vrows vcols
-              start-x start-y end-x end-y
-              tiles
-              entities
-              (:tile-map state))))
+  (draw-world
+    vrows
+    vcols
+    start-x
+    start-y
+    end-x
+    end-y
+    tiles
+    entities
+    (:tile-map state))))
 
 (defn draw-game [game]
   (clear-screen)
@@ -147,15 +144,7 @@
 (defn draw [state]
   (let [game (get-in state [:game])
         ui (first (get-in game [:uis]))]
-;;     (println ui)
-    (draw-ui state ui game)
-;;   (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
-;;   (draw-world 24 80
-;;               start-x start-y end-x end-y
-;;               (get-in state [:game :world :tiles])
-;;               (:tile-map state)))
-;;   (draw-word 0 0 (:tile-map state) "yeah    ok?"))
-  ))
+    (draw-ui state ui game)))
 
 (q/defsketch example
   :title "image demo"
