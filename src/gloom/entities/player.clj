@@ -13,7 +13,7 @@
         [gloom.entities.aspects.container :only [fetch withdraw full?]]
         [gloom.coordinates :only [destination-coords]]))
 
-(defrecord Player [id glyph color location max-hp hp attack exp])
+(defrecord Player [id glyph color location max-hp hp attack exp image])
 
 (defn make-player [world]
   (map->Player {
@@ -24,7 +24,8 @@
                  :max-hp 10
                  :hp 10
                  :attack 2
-                 :exp 0}))
+                 :exp 0
+                 :image :31}))
 
 (extend-type Player Entity
   (tick [this world]
@@ -34,6 +35,11 @@
   (get-in this [:inventory :name]))
 
 (add-aspect Player Mobile)
+
+(defn pick-up-item [world player item]
+  (if (full? (:inventory player))
+    (send-message player "You can't hold any more items!" nil world)
+    (gather world player item)))
 
 (defn move-player [world dir]
   (let [player (get-in world [:entities :player])
@@ -47,11 +53,6 @@
       (can-move? player target world) (move player target world)
       (can-dig? player target world) (dig player target world)
       :else world)))
-
-(defn pick-up-item [world player item]
-  (if (full? (:inventory player))
-    (send-message player "You can't hold any more items!" nil world)
-    (gather world player item)))
 
 (defn drop-item [world id]
    (let [player (get-in world [:entities :player])

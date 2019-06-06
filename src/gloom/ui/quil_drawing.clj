@@ -20,12 +20,6 @@
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
 
-(defmulti draw-ui
-  (fn [ui game]
-    (:kind ui)))
-
-(defmethod draw-ui :start [ui game])
-
 (defn draw-messages [messages])
 ;;   (doseq [[i msg] (enumerate messages)]
 ;;     (s/put-string screen 0 i msg {:fg :black :bg :white})))
@@ -52,7 +46,24 @@
     (= kind :floor) :3
     :else 0))
 
-(defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
+;; (defn draw-entity [screen start-x start-y {:keys [location glyph color]}]
+;;   (let [[entity-x entity-y] location
+;;         x (- entity-x start-x)
+;;         y (- entity-y start-y)]
+;;     (s/put-string screen x y glyph {:fg color})))
+
+(defn draw-entity [start-x start-y entity tile-map]
+  (let [[x y] (:location entity)
+        x (- x start-x)
+        y (- y start-y)
+        img ((:image entity) tile-map)]
+    (println x y)
+;;     (draw-tile x y img)
+;;     (println x y)
+;;     (draw-word x y tile-map "y")
+    (draw-tile x y img)))
+
+(defn draw-world [vrows vcols start-x start-y end-x end-y tiles entities tile-map]
   (doseq [[vrow-idx mrow-idx] (map vector
                                    (range 0 vrows)
                                    (range start-y end-y))
@@ -60,27 +71,21 @@
     (doseq [vcol-idx (range vcols)
             :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
       (let [id (tile-kind-lookup kind)]
-        (draw-tile vcol-idx vrow-idx tile-map id)))))
+        (draw-tile vcol-idx vrow-idx tile-map id))))
 
-;; (defmethod draw-ui :play [ui game]
-;;   (let [world (:world game)
-;;         {:keys [tiles entities]} world
-;;         player (:player entities)
-;;         [cols rows] screen-size
-;;         vcols cols
-;;         vrows (dec rows)
-;;         [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
-;;     (draw-world vrows vcols start-x start-y end-x end-y tiles)
-;;     (doseq [entity (vals entities)]
-;;       (draw-entity start-x start-y entity))
+    (doseq [entity (vals entities)]
+      (draw-entity start-x start-y entity tile-map))
+;;       (draw-tile (first (:location entity)) (second (:location entity)) tile-map (:image entity))))
+;;       (draw-entity entity tile-map)))
 ;;     (draw-hud game)
 ;;     (draw-messages (:messages player))))
+  )
 
-(defmethod draw-ui :win [ui game])
+;; (defmethod draw-ui :win [ui game])
 ;;   (s/put-string screen 0 0 "Congrats you win!")
 ;;   (s/put-string screen 0 1 "Press any escape to exit, anything else to restart..."))
 
-(defmethod draw-ui :lose [ui game])
+;; (defmethod draw-ui :lose [ui game])
 ;;   (s/put-string screen 0 0 "Better luck next time")
 ;;   (s/put-string screen 0 1 "Press any escape to exit, anything else to restart..."))
 
@@ -97,13 +102,40 @@
 ;;   (draw-item-list screen 0 0 (:list ui))
 ;;   (s/move-cursor screen 0 (:selection ui)))
 
-(defmethod draw-ui :menu [ui game])
+;; (defmethod draw-ui :menu [ui game])
 ;;   (clear-screen)
 ;;   (draw-menu ui game))
 
-(defmethod draw-ui :inventory [ui game])
+;; (defmethod draw-ui :inventory [ui game])
 ;;   (clear-screen screen)
 ;;   (draw-menu ui game screen))
+
+
+(defmulti draw-ui
+  (fn [state ui game]
+    (:kind ui)))
+
+;; (defmethod draw-ui :start [state ui game])
+
+(defmethod draw-ui :play [state ui game]
+;;   (println (:world game))
+;;   (println (get-viewport-coords game (:location player) vcols vrows))
+
+  (let [world (:world game)
+        {:keys [tiles entities]} world
+        player (:player entities)
+        [cols rows] screen-size
+        vcols cols
+        vrows (dec rows)
+        [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
+
+;;     (draw-world vrows vcols start-x start-y end-x end-y tiles)
+
+  (draw-world vrows vcols
+              start-x start-y end-x end-y
+              tiles
+              entities
+              (:tile-map state))))
 
 (defn draw-game [game]
   (clear-screen)
@@ -111,12 +143,17 @@
     (draw-ui ui game)))
 
 (defn draw [state]
-  (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
-  (draw-world 24 80
-              start-x start-y end-x end-y
-              (get-in state [:game :world :tiles])
-              (:tile-map state)))
-  (draw-word 0 0 (:tile-map state) "yeah    ok?"))
+  (let [game (get-in state [:game])
+        ui (first (get-in game [:uis]))]
+;;     (println ui)
+    (draw-ui state ui game)
+;;   (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
+;;   (draw-world 24 80
+;;               start-x start-y end-x end-y
+;;               (get-in state [:game :world :tiles])
+;;               (:tile-map state)))
+;;   (draw-word 0 0 (:tile-map state) "yeah    ok?"))
+  ))
 
 (q/defsketch example
   :title "image demo"

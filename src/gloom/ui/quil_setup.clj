@@ -3,7 +3,8 @@
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
         [gloom.entities.backpack :only [make-backpack]]
-        [gloom.core :only [new-game]])
+        [gloom.core :only [new-game]]
+        [gloom.entities.player :only [make-player]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -40,12 +41,17 @@
 (def get-tiles (memoize get-tile-map))
 
 (defn reset-game [game]
+  (let [world  (random-world)
+        player (make-player world)
+        player (assoc player :inventory (make-backpack))]
+
     (-> game
-        (assoc :world (random-world))
+        (assoc :world world)
+        (assoc-in [:world :entities :player] player)
 ;;         (update :world populate-world)
-        (assoc-in [:world :entities :player :inventory] (make-backpack))
+;;         (assoc-in [:world :entities :player :inventory] (make-backpack))
         (pop-ui)
-        (push-ui (->UI :play))))
+        (push-ui (->UI :play)))))
 
 (defn setup []
   (q/background 0)
