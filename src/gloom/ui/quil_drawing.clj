@@ -1,47 +1,16 @@
-(ns quil-drawing
-  (:use [gloom.ui.core :only [->UI]]
+(ns gloom.ui.quil-drawing
+  (:use [gloom.ui.core :only [->UI tile-size draw-tile]]
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
         [gloom.entities.backpack :only [make-backpack]]
-        [gloom.core :only [new-game]])
+        [gloom.core :only [new-game]]
+        [gloom.ui.quil-setup :only [setup]]
+        [gloom.ui.quil-key :only [key-pressed]]
+        [gloom.ui.quil-text :only [draw-word]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-(def tile-size 16)
-
 (def screen-size [80 24])
-
-(defn- get-start [column-number]
-  (+ (* column-number 16) column-number))
-
-(defn- get-tile [source-image column-number row-number]
-  (let [col-start (get-start column-number)
-        row-start (get-start row-number)
-        img (q/create-image 16 16 :rgb)]
-    (q/copy source-image img [col-start row-start 16 16] [0 0 16 16])
-    img))
-
-(defn- get-tile-row-rec [source-image row-number max-width accumulator counter]
-  (let [tile-id (-> row-number
-                  (* max-width)
-                  (+ counter)
-                  (str)
-                  (keyword))
-        tile (get-tile source-image counter row-number)
-        accumulator (assoc accumulator tile-id tile)]
-    (if
-      (= counter (dec max-width)) accumulator
-      (get-tile-row-rec source-image row-number max-width accumulator (inc counter)))))
-
-(defn- get-tile-row [source-image row-number row-width]
-  (get-tile-row-rec source-image row-number row-width {} 0))
-
-(defn- get-tile-map [source-image row-count row-width]
-  (->> (range row-count)
-       (map #(get-tile-row source-image % row-width))
-       (into {})))
-
-(def get-tiles (memoize get-tile-map))
 
 (defn clear-screen [tile-map]
   (let [[cols, rows] screen-size
@@ -61,19 +30,51 @@
 ;;   (doseq [[i msg] (enumerate messages)]
 ;;     (s/put-string screen 0 i msg {:fg :black :bg :white})))
 
-(defmethod draw-ui :play [ui game]
-  (let [world (:world game)
-        {:keys [tiles entities]} world
-        player (:player entities)
-        [cols rows] screen-size
-        vcols cols
-        vrows (dec rows)
-        [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
-    (draw-world vrows vcols start-x start-y end-x end-y tiles)
-    (doseq [entity (vals entities)]
-      (draw-entity start-x start-y entity))
-    (draw-hud game)
-    (draw-messages (:messages player))))
+(defn get-viewport-coords [game player-location vcols vrows]
+  (let [location (:location game)
+        [center-x center-y] player-location
+        tiles (:tiles (:world game))
+        map-rows (count tiles)
+        map-cols (count (first tiles))
+        start-x (max 0 (- center-x (int (/ vcols 2))))
+        start-y (max 0 (- center-y (int (/ vrows 2))))
+        end-x (+ start-x vcols)
+        end-x (min end-x map-cols)
+        end-y (+ start-y vrows)
+        end-y (min end-y map-rows)
+        start-x (- end-x vcols)
+        start-y (- end-y vrows)]
+        [start-x start-y end-x end-y]))
+
+(defn tile-kind-lookup [kind]
+  (cond
+    (= kind :wall) :19
+    (= kind :floor) :3
+    :else 0))
+
+(defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
+  (doseq [[vrow-idx mrow-idx] (map vector
+                                   (range 0 vrows)
+                                   (range start-y end-y))
+          :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
+    (doseq [vcol-idx (range vcols)
+            :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
+      (let [id (tile-kind-lookup kind)]
+        (draw-tile vcol-idx vrow-idx tile-map id)))))
+
+;; (defmethod draw-ui :play [ui game]
+;;   (let [world (:world game)
+;;         {:keys [tiles entities]} world
+;;         player (:player entities)
+;;         [cols rows] screen-size
+;;         vcols cols
+;;         vrows (dec rows)
+;;         [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
+;;     (draw-world vrows vcols start-x start-y end-x end-y tiles)
+;;     (doseq [entity (vals entities)]
+;;       (draw-entity start-x start-y entity))
+;;     (draw-hud game)
+;;     (draw-messages (:messages player))))
 
 (defmethod draw-ui :win [ui game])
 ;;   (s/put-string screen 0 0 "Congrats you win!")
@@ -109,148 +110,6 @@
   (doseq [ui (:uis game)]
     (draw-ui ui game)))
 
-(defn reset-game [game]
-    (-> game
-        (assoc :world (random-world))
-;;         (update :world populate-world)
-        (assoc-in [:world :entities :player :inventory] (make-backpack))
-        (pop-ui)
-        (push-ui (->UI :play))))
-
-(defn tile-kind-lookup [kind]
-  (cond
-    (= kind :wall) :19
-    (= kind :floor) :3
-    :else 0))
-
-(defn setup []
-  (q/background 0)
-  (q/frame-rate 15)
-
-  (let [game  (reset-game (new-game))
-        tiles (get-in game [:world :tiles])
-        base-image (q/load-image "resources/monochrome.png")]
-    (while (not (q/loaded? base-image))
-      (println "loading base image..."))
-    {:img base-image
-     :tile-map (get-tiles base-image 32 32)
-     :counter 0
-     :game game
-     :x 40
-     :y 20}))
-
-(defn update-quil [state]
-  (assoc state :pressed false))
-
-(defn key-pressed [state key-information]
-;;   (println key-information)
-;;   (println (:x state) (:y state))
-  (let [state (assoc state :pressed true)]
-  (case (:key key-information)
-    :w (update state :y dec)
-    :a (update state :x dec)
-    :s (update state :y inc)
-    :d (update state :x inc)
-    state)))
-
-(defn get-viewport-coords [game player-location vcols vrows]
-  (let [location (:location game)
-        [center-x center-y] player-location
-        tiles (:tiles (:world game))
-        map-rows (count tiles)
-        map-cols (count (first tiles))
-        start-x (max 0 (- center-x (int (/ vcols 2))))
-        start-y (max 0 (- center-y (int (/ vrows 2))))
-        end-x (+ start-x vcols)
-        end-x (min end-x map-cols)
-        end-y (+ start-y vrows)
-        end-y (min end-y map-rows)
-        start-x (- end-x vcols)
-        start-y (- end-y vrows)]
-        [start-x start-y end-x end-y]))
-
-(defn tile-lookup [id tile-map]
-  (id tile-map))
-
-(def tile-lookup-mem (memoize tile-lookup))
-
-(defn draw-tile
-  ([x y image]
-   (when (q/loaded? image)
-     (q/image image (* x tile-size) (* y tile-size))))
-  ([x y tile-map id]
-     (draw-tile x y (tile-lookup-mem id tile-map))))
-
-(defn draw-world [vrows vcols start-x start-y end-x end-y tiles tile-map]
-  (doseq [[vrow-idx mrow-idx] (map vector
-                                   (range 0 vrows)
-                                   (range start-y end-y))
-          :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
-    (doseq [vcol-idx (range vcols)
-            :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
-      (let [id (tile-kind-lookup kind)
-            img (tile-lookup-mem id tile-map)]
-        (draw-tile vcol-idx vrow-idx tile-map id)))))
-
-(defn character-to-id [id]
-  (case id
-    "a" :979
-    "b" :980
-    "c" :981
-    "d" :982
-    "e" :983
-    "f" :984
-    "g" :985
-    "h" :986
-    "i" :987
-    "j" :988
-    "k" :989
-    "l" :990
-    "m" :991
-    "n" :1011
-    "o" :1012
-    "p" :1013
-    "q" :1014
-    "r" :1015
-    "s" :1016
-    "t" :1017
-    "u" :1018
-    "v" :1019
-    "w" :1020
-    "x" :1021
-    "y" :1022
-    "z" :1023
-
-    "0" :947
-    "1" :948
-    "2" :949
-    "3" :950
-    "4" :951
-    "5" :952
-    "6" :953
-    "7" :954
-    "8" :955
-    "9" :956
-    ":" :957
-    "." :958
-    "%" :959
-
-    "?" :821
-    " " :0
-    :821))
-
-(defn draw-word-rec [x y tile-map ids]
-  (when (not (empty? ids))
-    (do
-      (draw-tile x y tile-map (first ids))
-      (draw-word-rec (inc x) y tile-map (rest ids)))))
-
-(defn draw-word [x y tile-map word]
-  (->> word
-       (map str)
-       (map character-to-id)
-       (draw-word-rec 0 0 tile-map)))
-
 (defn draw [state]
   (let [[start-x start-y end-x end-y] (get-viewport-coords (:game state) [(:x state) (:y state)] 80 24)]
   (draw-world 24 80
@@ -263,7 +122,6 @@
   :title "image demo"
   :size [720 384]
   :setup setup
-  :update update-quil
   :draw draw
   :key-pressed key-pressed
   :middleware [m/fun-mode])
