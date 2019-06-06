@@ -7,3 +7,5 @@
 
 (defn pop-ui [game]
   (update game :uis pop))
+
+(def tile-size 16)
