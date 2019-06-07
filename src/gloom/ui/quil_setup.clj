@@ -66,6 +66,7 @@
 
     (-> game
         (assoc :world world)
+        (assoc-in [:world :tick] 0)
         (assoc-in [:world :entities :player] player)
         (update :world populate-world)
 ;;         (assoc-in [:world :entities :player :inventory] (make-backpack))
@@ -83,7 +84,7 @@
         tiles (get-in game [:world :tiles])
         base-image (q/load-image "resources/monochrome.png")]
     (while (not (q/loaded? base-image))
-      (println "loading base image..."))
+      nil)
     {:img base-image
      :tile-map (get-tiles base-image 32 32)
      :counter 0

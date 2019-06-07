@@ -8,7 +8,7 @@
         [gloom.ui.quil-key :only [key-pressed]]
         [gloom.ui.quil-text :only [draw-word]]
         [gloom.entities.aspects.renderable :only [color image]]
-        )
+        [gloom.utils :only [enumerate]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -21,10 +21,6 @@
       (doall (for [x (range cols)
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
-
-(defn draw-messages [messages])
-;;   (doseq [[i msg] (enumerate messages)]
-;;     (s/put-string screen 0 i msg {:fg :black :bg :white})))
 
 (defn get-viewport-coords [game player-location vcols vrows]
   (let [location (:location game)
@@ -114,10 +110,13 @@
 
 ;; (defmethod draw-ui :start [state ui game])
 
-(defmethod draw-ui :play [state ui game]
-;;   (println (:world game))
-;;   (println (get-viewport-coords game (:location player) vcols vrows))
+(defn draw-messages [world message-duration messages tile-map]
+  (let [messages (filter #(>= (+ (:tick %) message-duration) (:tick world)) messages)
+        messages (map :message messages)]
+    (doseq [[i msg] (enumerate messages)]
+      (draw-word 0 i tile-map msg))))
 
+(defmethod draw-ui :play [state ui game]
   (let [world (:world game)
         {:keys [tiles entities]} world
         player (:player entities)
@@ -134,12 +133,9 @@
     end-y
     tiles
     entities
-    (:tile-map state))))
-
-(defn draw-game [game]
-  (clear-screen)
-  (doseq [ui (:uis game)]
-    (draw-ui ui game)))
+    (:tile-map state))
+    (draw-messages world 2 (:messages player) (:tile-map state))
+    ))
 
 (defn draw [state]
   (let [game (get-in state [:game])
