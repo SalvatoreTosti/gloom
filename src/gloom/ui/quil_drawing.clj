@@ -22,6 +22,11 @@
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
 
+(defn clear-row [y tile-map]
+  (let [[cols, rows] screen-size]
+    (doseq [x (range cols)]
+      (draw-tile x y :0 tile-map))))
+
 (defn get-viewport-coords [game player-location vcols vrows]
   (let [location (:location game)
         [center-x center-y] player-location
@@ -116,6 +121,13 @@
     (doseq [[i msg] (enumerate messages)]
       (draw-word 0 i tile-map msg))))
 
+(defn draw-hud [game tile-map]
+  (let [y (dec (second screen-size))
+        player (get-in game [:world :entities :player])
+        display-word (str "health: " (:hp player) "/" (:max-hp player) " exp: "(:exp player))]
+    (clear-row y tile-map)
+    (draw-word 0 y tile-map display-word)))
+
 (defmethod draw-ui :play [state ui game]
   (let [world (:world game)
         {:keys [tiles entities]} world
@@ -135,6 +147,7 @@
     entities
     (:tile-map state))
     (draw-messages world 2 (:messages player) (:tile-map state))
+    (draw-hud game (:tile-map state))
     ))
 
 (defn draw [state]
