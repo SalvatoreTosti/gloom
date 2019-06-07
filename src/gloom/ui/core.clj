@@ -27,6 +27,7 @@
   (case RGB-values
     :white [255 255 255]
     :pink [200 127 180]
+    :red [220 20 60]
     RGB-values))
 
 (defn draw-tile

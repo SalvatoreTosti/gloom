@@ -5,6 +5,7 @@
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
+        [gloom.entities.apple :only [make-apple]]
         [gloom.core :only [new-game]]
         [gloom.entities.player :only [make-player]]
 )
@@ -57,7 +58,7 @@
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
-;;         (add-creatures make-apple 300)
+        (add-creatures make-apple 300)
         ))
 
 (defn reset-game [game]
