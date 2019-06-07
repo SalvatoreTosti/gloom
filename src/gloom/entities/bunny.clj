@@ -2,7 +2,9 @@
   (:use [gloom.entities.core :only [Entity get-id add-aspect]]
         [gloom.entities.aspects.mobile :only [Mobile move can-move?]]
         [gloom.entities.aspects.destructible :only [Destructible]]
-        [gloom.world :only [find-empty-tile find-empty-neighbor]]))
+        [gloom.world :only [find-empty-tile find-empty-neighbor]]
+        [gloom.entities.aspects.renderable :only [Renderable]]))
+
 
 
 (defrecord Bunny [id glyph color location max-hp hp name])
@@ -35,4 +37,9 @@
 
 (add-aspect Bunny Mobile)
 (add-aspect Bunny Destructible)
+(add-aspect Bunny Renderable
+            (color [this]
+                   :pink)
+            (image [this]
+                   :255))
 

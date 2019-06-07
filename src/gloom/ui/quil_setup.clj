@@ -4,6 +4,7 @@
         [gloom.ui.core :only [->UI push-ui pop-ui]]
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.entities.lichen :only [make-lichen]]
+        [gloom.entities.bunny :only [make-bunny]]
         [gloom.core :only [new-game]]
         [gloom.entities.player :only [make-player]]
 )
@@ -55,7 +56,7 @@
 ;;   (let [world (assoc-in world [:entities :player] (make-player world))]
     (-> world
         (add-creatures make-lichen 30)
-;;         (add-creatures make-bunny 20)
+        (add-creatures make-bunny 20)
 ;;         (add-creatures make-apple 300)
         ))
 
