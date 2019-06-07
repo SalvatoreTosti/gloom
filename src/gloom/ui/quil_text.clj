@@ -3,6 +3,7 @@
   (:require [quil.core :as q]))
 
 (defn character-to-id [id]
+  (let [id (clojure.string/lower-case id)]
   (case id
     "a" :979
     "b" :980
@@ -47,9 +48,9 @@
 
     "?" :821
     " " :0
-    :821))
+    :821)))
 
-(defn draw-word-rec [x y tile-map ids]
+(defn- draw-word-rec [x y tile-map ids]
   (when (not (empty? ids))
     (do
       (draw-tile x y tile-map (first ids))
@@ -59,4 +60,4 @@
   (->> word
        (map str)
        (map character-to-id)
-       (draw-word-rec 0 0 tile-map)))
+       (draw-word-rec x y tile-map)))
