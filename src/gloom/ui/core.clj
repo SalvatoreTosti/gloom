@@ -11,12 +11,6 @@
 
 (def tile-size 16)
 
-;; (defn tile-lookup [id tile-map]
-;;   (id tile-map))
-
-;; (def tile-lookup-mem (memoize tile-lookup))
-
-
 (defn- get-tile [id tile-map]
   (let [result (id tile-map)]
     (if result
@@ -43,3 +37,13 @@
   (q/tint r g b)
   (draw-tile x y id tile-map)
   (q/no-tint))))
+
+(defn invert-tile [x y]
+  (let [clone (q/create-image tile-size tile-size :rgb)]
+    (q/copy
+      (q/current-graphics)
+      clone
+      [(* x tile-size) (* y tile-size) tile-size tile-size]
+      [0 0 tile-size tile-size])
+    (q/image-filter clone :invert)
+    (q/image clone (* x tile-size) (* y tile-size))))

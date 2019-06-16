@@ -56,8 +56,19 @@
       (draw-tile x y tile-map (first ids))
       (draw-word-rec (inc x) y tile-map (rest ids)))))
 
-(defn draw-word [x y tile-map word]
+(defn draw-text [x y tile-map word]
   (->> word
        (map str)
        (map character-to-id)
        (draw-word-rec x y tile-map)))
+
+(defn text-center-start [y container-width text]
+    (let [container-mid (int (/ container-width 2))
+          text-mid (int (/ (count text) 2))
+          text-start (- container-mid text-mid)]
+      (if (neg? text-start) 0
+        text-start)))
+
+(defn draw-text-centered [y container-width tile-map text]
+    (-> (text-center-start y container-width text)
+        (draw-text y tile-map text)))
