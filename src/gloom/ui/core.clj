@@ -10,6 +10,7 @@
   (update game :uis pop))
 
 (def tile-size 16)
+(def screen-size [45 24])
 
 (defn- get-tile [id tile-map]
   (let [result (id tile-map)]
@@ -47,3 +48,16 @@
       [0 0 tile-size tile-size])
     (q/image-filter clone :invert)
     (q/image clone (* x tile-size) (* y tile-size))))
+
+(defn invert-rect [start-x start-y end-x end-y]
+  (doseq [x (range start-x end-x)
+          y (range start-y end-y)]
+    (invert-tile x y)))
+
+(defn clear-screen [tile-map]
+  (let [[cols, rows] screen-size
+        blank (:0 tile-map)]
+    (when (q/loaded? blank)
+      (doall (for [x (range cols)
+                   y (range rows)]
+               (q/image blank (* x tile-size) (* y tile-size)))))))

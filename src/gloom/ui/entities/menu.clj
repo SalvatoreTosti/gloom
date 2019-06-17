@@ -1,6 +1,8 @@
 (ns gloom.ui.entities.menu
   (:use [gloom.entities.core :only [Entity get-id add-aspect]]
-        [gloom.ui.entities.aspects.selection :only [Selection]])
+        [gloom.ui.entities.aspects.selection :only [Selection]]
+        [gloom.ui.core :only [screen-size clear-screen]]
+        [gloom.ui.quil-text :only [draw-text-centered text-center-start draw-text invert-word]])
   (:require [lanterna.screen :as s]))
 
 
@@ -13,31 +15,31 @@
   (map #(item-mapping % mapping) items))
 
 (defn make-menu
-  ([kind headers items mapping]
+  ([kind header items mapping]
    (map->Menu {:id (get-id)
-               :headers headers
+               :header header
                :kind kind
                :items items
                :item-pairs (pair-mapping items mapping)
                :selection 0}))
-  ([headers items mapping]
-   (make-menu :menu headers items mapping))
+  ([header items mapping]
+   (make-menu :menu header items mapping))
   ([items mapping]
    (make-menu :menu nil items mapping)))
 
-(defn draw-string-list [screen start-offset strings]
+(defn draw-string-list [start-offset tile-map strings]
   (dorun (for [x (range (count strings))]
-           (s/put-string screen 0 (+ x start-offset) (nth strings x)))))
+           (draw-text 0 (+ x start-offset) tile-map (nth strings x)))))
 
-(defn draw-item-list [screen line-count items headers]
-  (draw-string-list screen 0 headers)
-  (draw-string-list screen (count headers) items))
+(defn draw-menu [state {:keys [items item-pairs header selection] :as this} game]
+  (clear-screen (:tile-map state))
+  (draw-text-centered 0 (first screen-size) (:tile-map state) header)
+  (-> (first screen-size)
+      (text-center-start  header)
+      (invert-word 0 header))
+  (draw-string-list 1 (:tile-map state) (map second item-pairs)))
 
-(defn draw-menu [{:keys [items item-pairs headers selection] :as this} game screen]
-    (draw-item-list screen 0 (map second item-pairs) headers)
-    (s/move-cursor screen 0 (+ (count headers) selection)))
-
-(defn get-selection [{:keys [items item-pairs headers selection] :as this}]
+(defn get-selection [{:keys [items item-pairs selection] :as this}]
   (let [selection (:selection this)
         items (:items this)]
     (when (and

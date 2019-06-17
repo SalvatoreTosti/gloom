@@ -1,25 +1,24 @@
 (ns gloom.ui.quil-drawing
-  (:use [gloom.ui.core :only [->UI tile-size draw-tile invert-tile push-ui pop-ui]]
+  (:use [gloom.ui.core :only [->UI screen-size tile-size draw-tile invert-tile push-ui pop-ui clear-screen]]
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.core :only [new-game]]
         [gloom.ui.quil-setup :only [setup]]
         [gloom.ui.quil-key :only [key-pressed]]
         [gloom.ui.quil-text :only [draw-text draw-text-centered]]
+        [gloom.ui.entities.menu :only [make-menu draw-menu]]
         [gloom.entities.aspects.renderable :only [color image]]
         [gloom.utils :only [enumerate]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-(def screen-size [45 24])
-
-(defn clear-screen [tile-map]
-  (let [[cols, rows] screen-size
-        blank (:0 tile-map)]
-    (when (q/loaded? blank)
-      (doall (for [x (range cols)
-                   y (range rows)]
-               (q/image blank (* x tile-size) (* y tile-size)))))))
+;; (defn clear-screen [tile-map]
+;;   (let [[cols, rows] screen-size
+;;         blank (:0 tile-map)]
+;;     (when (q/loaded? blank)
+;;       (doall (for [x (range cols)
+;;                    y (range rows)]
+;;                (q/image blank (* x tile-size) (* y tile-size)))))))
 
 (defn clear-row [y tile-map]
   (let [[cols, rows] screen-size]
@@ -143,26 +142,16 @@
     entities
     (:tile-map state))
     (draw-messages world 2 (:messages player) (:tile-map state))
-    (draw-hud game (:tile-map state))
-    ))
+    (draw-hud game (:tile-map state))))
 
+(defmethod draw-ui :menu [state ui game]
+  (draw-menu state ui game))
 
-(defn draw-menu [state ui game]
-  (clear-screen (:tile-map state))
-  (draw-text-centered 0 (first screen-size) (:tile-map state) "test")
-  (invert-tile 20 0))
 
 (defn draw [state]
   (let [game (get-in state [:game])
-        ui (first (get-in game [:uis]))]
-
-
-    (draw-menu state ui game))
-;;      (draw-equip-menu (:tile-map state)))
-
-;;     (draw-ui state ui game))
-
-  )
+        ui (last (get-in game [:uis]))]
+    (draw-ui state ui game)))
 
 (q/defsketch example
   :title "image demo"

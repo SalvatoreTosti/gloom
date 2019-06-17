@@ -1,5 +1,5 @@
 (ns gloom.ui.quil-text
-  (:use [gloom.ui.core :only [draw-tile]])
+  (:use [gloom.ui.core :only [draw-tile invert-rect]])
   (:require [quil.core :as q]))
 
 (defn character-to-id [id]
@@ -62,7 +62,7 @@
        (map character-to-id)
        (draw-word-rec x y tile-map)))
 
-(defn text-center-start [y container-width text]
+(defn text-center-start [container-width text]
     (let [container-mid (int (/ container-width 2))
           text-mid (int (/ (count text) 2))
           text-start (- container-mid text-mid)]
@@ -70,5 +70,10 @@
         text-start)))
 
 (defn draw-text-centered [y container-width tile-map text]
-    (-> (text-center-start y container-width text)
+    (-> (text-center-start container-width text)
         (draw-text y tile-map text)))
+
+(defn invert-word [start-x start-y word]
+  (invert-rect start-x start-y (+ start-x (count word)) (inc start-y)))
+
+

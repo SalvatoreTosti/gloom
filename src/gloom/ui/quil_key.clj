@@ -1,5 +1,7 @@
 (ns gloom.ui.quil-key
   (:use [gloom.entities.player :only [move-player]]
+        [gloom.ui.core :only [push-ui pop-ui]]
+        [gloom.ui.entities.menu :only [make-menu]]
         [gloom.entities.core :only [tick]])
   (:require [quil.core :as q]))
 
@@ -26,14 +28,52 @@
 ;;                     game (clear-messages game)]
 ;;                 game))
 
-(defn key-pressed [state key-information]
+(defmulti process-input
+  (fn [state key-information]
+    (let [ui (last (get-in state [:game :uis]))]
+    (:kind ui))))
+
+(defmethod process-input :play [state key-information]
   (->
     (case (:key key-information)
       :w (update-in state [:game :world] move-player :n)
       :a (update-in state [:game :world] move-player :w)
       :s (update-in state [:game :world] move-player :s)
       :d (update-in state [:game :world] move-player :e)
+      :q (update-in state [:game] push-ui (make-menu "Spellz" {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name]))
       state)
     (update-in [:game] process-tick)
     (update-in [:game :world :tick] inc)
-    ))
+  ))
+
+
+(defmethod process-input :menu [state key-information]
+  (->
+    (case (:key key-information)
+;;       :w (update-in state [:game :world] move-player :n)
+;;       :a (update-in state [:game :world] move-player :w)
+;;       :s (update-in state [:game :world] move-player :s)
+;;       :d (update-in state [:game :world] move-player :e)
+      :q (update-in state [:game] pop-ui)
+;;            (update-in state [:game] push-ui (make-menu "Spellz" {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name])))
+      state)))
+;;     (update-in [:game] process-tick)
+;;     (update-in [:game :world :tick] inc)
+
+(defn key-pressed [state key-information]
+  (process-input state key-information)
+  )
+;;   (process-input state key-information))
+;;   (->
+;;     (case (:key key-information)
+;;       :w (update-in state [:game :world] move-player :n)
+;;       :a (update-in state [:game :world] move-player :w)
+;;       :s (update-in state [:game :world] move-player :s)
+;;       :d (update-in state [:game :world] move-player :e)
+;;       :q (do
+;;            (println (get-in state [:game :uis]))
+;;            (update-in state [:game] push-ui (make-menu "Spellz" {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name])))
+;;       state)
+;;     (update-in [:game] process-tick)
+;;     (update-in [:game :world :tick] inc)
+
