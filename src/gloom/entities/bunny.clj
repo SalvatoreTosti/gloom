@@ -3,7 +3,8 @@
         [gloom.entities.aspects.mobile :only [Mobile move can-move?]]
         [gloom.entities.aspects.destructible :only [Destructible]]
         [gloom.world :only [find-empty-tile find-empty-neighbor]]
-        [gloom.entities.aspects.renderable :only [Renderable]]))
+        [gloom.entities.aspects.renderable :only [Renderable]]
+        [gloom.entities.aspects.describable :only [Describable]]))
 
 
 
@@ -37,6 +38,9 @@
 
 (add-aspect Bunny Mobile)
 (add-aspect Bunny Destructible)
+(add-aspect Bunny Describable
+            (type-name [this]
+                       "bunny"))
 (add-aspect Bunny Renderable
             (color [this]
                    :pink)

@@ -3,7 +3,8 @@
         [gloom.entities.aspects.destructible :only [Destructible]]
         [gloom.entities.aspects.receiver :only [send-message-nearby]]
         [gloom.world :only [find-empty-neighbor]]
-        [gloom.entities.aspects.renderable :only [Renderable]]))
+        [gloom.entities.aspects.renderable :only [Renderable]]
+        [gloom.entities.aspects.describable :only [Describable]]))
 
 (defrecord Lichen [id glyph color location max-hp hp name])
 
@@ -35,6 +36,9 @@
           world)))
 
 (add-aspect Lichen Destructible)
+(add-aspect Lichen Describable
+            (type-name [this]
+                       "lichen"))
 (add-aspect Lichen Renderable
             (color [this]
                    [99 240 66])

@@ -12,7 +12,8 @@
         [gloom.entities.items :only [gather dump]]
         [gloom.entities.aspects.container :only [fetch withdraw full?]]
         [gloom.coordinates :only [destination-coords]]
-        [gloom.entities.aspects.renderable :only [Renderable]]))
+        [gloom.entities.aspects.renderable :only [Renderable]]
+        [gloom.entities.aspects.describable :only [Describable]]))
 
 (defrecord Player [id glyph color location max-hp hp attack exp image])
 
@@ -63,6 +64,10 @@
        (send-message player "There's no room to drop the item!" nil world))))
 
 (add-aspect Player Digger)
+(add-aspect Player Describable
+            (type-name [this]
+                       "player"))
+
 (add-aspect Player Attacker)
 (add-aspect Player Receiver)
 (add-aspect Player Leveler)
