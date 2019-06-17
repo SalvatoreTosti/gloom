@@ -23,6 +23,11 @@
     :white [255 255 255]
     :pink [200 127 180]
     :red [220 20 60]
+    :slate [112 128 144]
+    :beige [245 245 220]
+    :dark-gray [169 169 169]
+    :silver [192 192 192]
+    :light-gray [211 211 211]
     RGB-values))
 
 (defn draw-tile

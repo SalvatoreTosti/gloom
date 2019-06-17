@@ -12,18 +12,10 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-;; (defn clear-screen [tile-map]
-;;   (let [[cols, rows] screen-size
-;;         blank (:0 tile-map)]
-;;     (when (q/loaded? blank)
-;;       (doall (for [x (range cols)
-;;                    y (range rows)]
-;;                (q/image blank (* x tile-size) (* y tile-size)))))))
-
 (defn clear-row [y tile-map]
   (let [[cols, rows] screen-size]
     (doseq [x (range cols)]
-      (draw-tile x y :0 tile-map))))
+      (draw-tile x y tile-map :0))))
 
 (defn get-viewport-coords [game player-location vcols vrows]
   (let [location (:location game)
@@ -59,7 +51,7 @@
   (let [[x y] (:location entity)
         x (- x start-x)
         y (- y start-y)]
-    (draw-tile x y (image entity) tile-map (color entity))))
+    (draw-tile x y tile-map (image entity) (color entity))))
 
 (defn draw-world [vrows vcols start-x start-y end-x end-y tiles entities tile-map]
   (doseq [[vrow-idx mrow-idx] (map vector
@@ -67,9 +59,9 @@
                                    (range start-y end-y))
           :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
     (doseq [vcol-idx (range vcols)
-            :let [{:keys [kind glyph color]} (row-tiles vcol-idx)]]
+            :let [{:keys [kind color]} (row-tiles vcol-idx)]]
       (let [id (tile-kind-lookup kind)]
-        (draw-tile vcol-idx vrow-idx tile-map id))))
+        (draw-tile vcol-idx vrow-idx tile-map id color))))
 
     (doseq [entity (vals entities)]
       (draw-entity start-x start-y entity tile-map)))
@@ -147,15 +139,14 @@
 (defmethod draw-ui :menu [state ui game]
   (draw-menu state ui game))
 
-
 (defn draw [state]
   (let [game (get-in state [:game])
         ui (last (get-in game [:uis]))]
     (draw-ui state ui game)))
 
-(q/defsketch example
-  :title "image demo"
-  :size [(* (first screen-size) tile-size) (* (second screen-size) tile-size)]
+(q/defsketch gloom-sketch
+  :title "gloom"
+  :size [(* (first  screen-size) tile-size) (* (second screen-size) tile-size)]
   :setup setup
   :draw draw
   :key-pressed key-pressed

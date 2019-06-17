@@ -5,12 +5,12 @@
 (def world-size [160 50])
 
 (defrecord World [tiles])
-(defrecord Tile [kind glyph color])
+(defrecord Tile [kind color])
 
 (def tiles
-  {:floor (->Tile :floor "." :white)
-   :wall  (->Tile :wall  "#" :white)
-   :bound (->Tile :bound "X" :black)})
+  {:floor (->Tile :floor :light-gray)
+   :wall  (->Tile :wall :slate)
+   :bound (->Tile :bound :black)})
 
 (defn get-tile-from-tiles [tiles [x y]]
   (get-in tiles [y x] (:bound tiles)))

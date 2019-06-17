@@ -58,7 +58,7 @@
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
-        (add-creatures make-apple 300)
+        (add-creatures make-apple 30)
         ))
 
 (defn reset-game [game]
