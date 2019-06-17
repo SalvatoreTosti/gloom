@@ -40,6 +40,8 @@
 
 (defmethod process-input :play [state key-information]
   (case (:key key-information)
+    :space (-> state
+             (tick-state))
     :w (-> state
            (update-in [:game :world] move-player :n)
            tick-state)
@@ -61,23 +63,6 @@
     (case (:key key-information)
       :q (update-in state [:game] pop-ui)
       state)))
-;;     (update-in [:game] process-tick)
-;;     (update-in [:game :world :tick] inc)
 
 (defn key-pressed [state key-information]
-  (process-input state key-information)
-  )
-;;   (process-input state key-information))
-;;   (->
-;;     (case (:key key-information)
-;;       :w (update-in state [:game :world] move-player :n)
-;;       :a (update-in state [:game :world] move-player :w)
-;;       :s (update-in state [:game :world] move-player :s)
-;;       :d (update-in state [:game :world] move-player :e)
-;;       :q (do
-;;            (println (get-in state [:game :uis]))
-;;            (update-in state [:game] push-ui (make-menu "Spellz" {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name])))
-;;       state)
-;;     (update-in [:game] process-tick)
-;;     (update-in [:game :world :tick] inc)
-
+  (process-input state key-information))
