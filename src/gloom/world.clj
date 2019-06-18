@@ -9,7 +9,7 @@
 
 (def tiles
   {:floor (->Tile :floor :light-gray)
-   :wall  (->Tile :wall :slate)
+   :wall  (->Tile :wall :dark-gray)
    :bound (->Tile :bound :black)})
 
 (defn get-tile-from-tiles [tiles [x y]]

@@ -30,22 +30,14 @@
         end-y (+ start-y vrows)
         end-y (min end-y map-rows)
         start-x (- end-x vcols)
-        start-y (- end-y vrows)
-        ]
+        start-y (- end-y vrows)]
     [start-x start-y end-x end-y]))
-
 
 (defn tile-kind-lookup [kind]
   (cond
     (= kind :wall) :19
-    (= kind :floor) :3
+    (= kind :floor) :0
     :else 0))
-
-;; (defn draw-entity [screen start-x start-y {:keys [location glyph color]}]
-;;   (let [[entity-x entity-y] location
-;;         x (- entity-x start-x)
-;;         y (- entity-y start-y)]
-;;     (s/put-string screen x y glyph {:fg color})))
 
 (defn draw-entity [start-x start-y entity tile-map]
   (let [[x y] (:location entity)
@@ -94,7 +86,6 @@
 ;; (defmethod draw-ui :inventory [ui game])
 ;;   (clear-screen screen)
 ;;   (draw-menu ui game screen))
-
 
 (defmulti draw-ui
   (fn [state ui game]
@@ -146,7 +137,8 @@
 
 (q/defsketch gloom-sketch
   :title "gloom"
-  :size [(* (first  screen-size) tile-size) (* (second screen-size) tile-size)]
+  :size [(* (first  screen-size) tile-size)
+         (* (second screen-size) tile-size)]
   :setup setup
   :draw draw
   :key-pressed key-pressed
