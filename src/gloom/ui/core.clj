@@ -28,6 +28,9 @@
     :dark-gray [169 169 169]
     :silver [192 192 192]
     :light-gray [211 211 211]
+    :sky-blue [0 191 255]
+    :lavender [230 230 250]
+    :yellow [255 250 205]
     RGB-values))
 
 (defn draw-tile
