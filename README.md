@@ -49,5 +49,6 @@ your option) any later version.
 ## Acknowledgments
 
 * [Steve Losh's Caves of Clojure](http://stevelosh.com/blog/2012/07/caves-of-clojure-01/)
+* Art by [kenny.nl](https://www.kenney.nl/)
 
 
