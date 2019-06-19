@@ -9,6 +9,11 @@
 (defn pop-ui [game]
   (update game :uis pop))
 
+(defn peek-ui [game]
+  (-> game
+      :uis
+      last))
+
 (def tile-size 16)
 (def screen-size [45 24])
 

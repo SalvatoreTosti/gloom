@@ -1,8 +1,10 @@
 (ns gloom.ui.quil-key
   (:use [gloom.entities.player :only [move-player]]
-        [gloom.ui.core :only [push-ui pop-ui]]
+        [gloom.coordinates :only [destination-coords]]
+        [gloom.ui.core :only [peek-ui push-ui pop-ui]]
         [gloom.ui.entities.menu :only [make-menu]]
-        [gloom.entities.core :only [tick]])
+        [gloom.entities.core :only [tick]]
+        [gloom.ui.core :only [->UI]])
   (:require [quil.core :as q]))
 
 (defn tick-entity [world entity]
@@ -41,7 +43,7 @@
 (defmethod process-input :play [state key-information]
   (case (:key key-information)
     :space (-> state
-             (tick-state))
+               (tick-state))
     :w (-> state
            (update-in [:game :world] move-player :n)
            tick-state)
@@ -56,6 +58,10 @@
            tick-state)
     :q (-> state
            (update-in [:game] push-ui (make-menu "Spells" {:a {:name "a"}, :b {:name "b"}, :c {:name "c"}} [:name])))
+    :e (let [location (get-in state [:game :world :entities :player :location])
+             cursor-ui (-> (->UI :cursor)
+                           (assoc :location location))]
+         (update-in state [:game] push-ui cursor-ui))
     state))
 
 (defmethod process-input :menu [state key-information]
@@ -63,6 +69,31 @@
     (case (:key key-information)
       :q (update-in state [:game] pop-ui)
       state)))
+
+(defn update-location [cursor-ui dir]
+;;   (println cursor-ui dir)
+  (update cursor-ui :location destination-coords dir))
+
+(defmethod process-input :cursor [state key-information]
+  (let [cursor-ui (-> state
+                      :game
+                      peek-ui)
+        move-cursor (fn [ui dir] (update ui :location destination-coords dir))]
+    (case (:key key-information)
+      :w (-> state
+             (update-in [:game] pop-ui)
+             (update-in [:game] push-ui (move-cursor cursor-ui :n)))
+      :a (-> state
+             (update-in [:game] pop-ui)
+             (update-in [:game] push-ui (move-cursor cursor-ui :w)))
+      :s (-> state
+             (update-in [:game] pop-ui)
+             (update-in [:game] push-ui (move-cursor cursor-ui :s)))
+      :d (-> state
+             (update-in [:game] pop-ui)
+             (update-in [:game] push-ui (move-cursor cursor-ui :e)))
+      :e (update-in state [:game] pop-ui)
+     state)))
 
 (defn key-pressed [state key-information]
   (process-input state key-information))

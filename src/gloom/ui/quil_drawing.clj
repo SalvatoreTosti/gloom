@@ -130,6 +130,35 @@
 (defmethod draw-ui :menu [state ui game]
   (draw-menu state ui game))
 
+(defn draw-cursor [start-x start-y state]
+  (let [ui (last (get-in state [:game :uis]))
+        [x y] (:location ui)
+        x (- x start-x)
+        y (- y start-y)]
+    (draw-tile x y (:tile-map state) :3 :red)))
+
+;;   )
+
+(defmethod draw-ui :cursor [state ui game]
+  (let [world (:world game)
+        {:keys [tiles entities]} world
+        player (:player entities)
+        [cols rows] screen-size
+        vcols cols
+        vrows rows
+        [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
+    (draw-world
+      vrows
+      vcols
+      start-x
+      start-y
+      end-x
+      end-y
+      tiles
+      entities
+    (:tile-map state))
+    (draw-cursor start-x start-y state)))
+
 (defn draw [state]
   (let [game (get-in state [:game])
         ui (last (get-in game [:uis]))]
