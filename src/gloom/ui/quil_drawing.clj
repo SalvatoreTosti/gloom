@@ -1,5 +1,5 @@
 (ns gloom.ui.quil-drawing
-  (:use [gloom.ui.core :only [->UI screen-size tile-size draw-tile invert-tile push-ui pop-ui clear-screen]]
+  (:use [gloom.ui.core :only [->UI screen-size tile-size draw-tile invert-tile push-ui pop-ui peek-ui clear-screen]]
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.core :only [new-game]]
@@ -17,8 +17,9 @@
     (doseq [x (range cols)]
       (draw-tile x y tile-map :0))))
 
-(defn get-viewport-coords [game player-location vcols vrows]
-  (let [location (:location game)
+(defn get-viewport-coords [screen-size player-location game]
+  (let [[vcols vrows] screen-size
+        location (:location game)
         [center-x center-y] player-location
         tiles (:tiles (:world game))
         map-rows (count tiles)
@@ -45,18 +46,25 @@
         y (- y start-y)]
     (draw-tile x y tile-map (image entity) (color entity))))
 
-(defn draw-world [vrows vcols start-x start-y end-x end-y tiles entities tile-map]
-  (doseq [[vrow-idx mrow-idx] (map vector
-                                   (range 0 vrows)
-                                   (range start-y end-y))
-          :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
-    (doseq [vcol-idx (range vcols)
-            :let [{:keys [kind color]} (row-tiles vcol-idx)]]
-      (let [id (tile-kind-lookup kind)]
-        (draw-tile vcol-idx vrow-idx tile-map id color))))
+(defn draw-entities [viewport-coordinates entities tile-map]
+  (let [[start-x start-y] viewport-coordinates]
+    (doseq [entity entities]
+      (draw-entity start-x start-y entity tile-map))))
 
-    (doseq [entity (vals entities)]
-      (draw-entity start-x start-y entity tile-map)))
+(defn draw-terrain [screen-size viewport-coordinates tiles tile-map]
+  (let [[view-cols view-rows] screen-size
+        [start-x start-y end-x end-y] viewport-coordinates]
+    (doseq [[vrow-idx mrow-idx] (map vector
+                                     (range view-rows)
+                                     (range start-y end-y))
+            :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
+      (doseq [col (range view-cols)
+              :let [{:keys [kind color]} (row-tiles col)]]
+          (draw-tile col vrow-idx tile-map (tile-kind-lookup kind) color)))))
+
+(defn draw-world [screen-size viewport-coordinates {:keys [tiles entities] :as world} tile-map]
+  (draw-terrain screen-size viewport-coordinates tiles tile-map)
+  (draw-entities viewport-coordinates (vals entities) tile-map))
 
 ;; (defmethod draw-ui :win [ui game])
 ;;   (s/put-string screen 0 0 "Congrats you win!")
@@ -108,59 +116,42 @@
 
 (defmethod draw-ui :play [state ui game]
   (let [world (:world game)
-        {:keys [tiles entities]} world
-        player (:player entities)
-        [cols rows] screen-size
-        vcols cols
-        vrows rows
-        [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
-  (draw-world
-    vrows
-    vcols
-    start-x
-    start-y
-    end-x
-    end-y
-    tiles
-    entities
-    (:tile-map state))
+        player (get-in world [:entities :player])]
+    (draw-world
+      screen-size
+      (get-viewport-coords screen-size (:location player) game)
+      world
+      (:tile-map state))
     (draw-messages world 2 (:messages player) (:tile-map state))
     (draw-hud game (:tile-map state))))
 
 (defmethod draw-ui :menu [state ui game]
   (draw-menu state ui game))
 
-(defn draw-cursor [start-x start-y state]
-  (let [ui (last (get-in state [:game :uis]))
+(defn draw-cursor [viewport-coordinates state]
+  (let [ui (peek-ui (:game state))
         [x y] (:location ui)
+        [start-x start-y] viewport-coordinates
         x (- x start-x)
         y (- y start-y)]
-    (draw-tile x y (:tile-map state) :3 :red)))
+    (invert-tile x y)))
 
 (defmethod draw-ui :cursor [state ui game]
-  (let [world (:world game)
-        {:keys [tiles entities]} world
-        player (:player entities)
-        [cols rows] screen-size
-        vcols cols
-        vrows rows
-        [start-x start-y end-x end-y] (get-viewport-coords game (:location player) vcols vrows)]
-    (draw-world
-      vrows
-      vcols
-      start-x
-      start-y
-      end-x
-      end-y
-      tiles
-      entities
-    (:tile-map state))
-    (draw-cursor start-x start-y state)))
+   (let [world (:world game)
+         player (get-in world [:entities :player])
+         viewport-coordinates (get-viewport-coords screen-size (:location player) game)]
+     (draw-world
+       screen-size
+       (get-viewport-coords screen-size (:location player) game)
+       world
+       (:tile-map state))
+     (draw-cursor viewport-coordinates state)))
 
 (defn draw [state]
-  (let [game (get-in state [:game])
-        ui (last (get-in game [:uis]))]
-    (draw-ui state ui game)))
+    (draw-ui
+      state
+      (peek-ui (:game state))
+      (:game state)))
 
 (q/defsketch gloom-sketch
   :title "gloom"
