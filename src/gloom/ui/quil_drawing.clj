@@ -1,8 +1,7 @@
 (ns gloom.ui.quil-drawing
-  (:use [gloom.ui.core :only [->UI screen-size tile-size draw-tile invert-tile push-ui pop-ui peek-ui clear-screen clear-row]]
-        [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
+  (:use [gloom.ui.core :only [->UI tile-size draw-tile invert-tile push-ui pop-ui peek-ui clear-row]]
+        [gloom.world :only [random-world get-tile-kind get-tile-by-coord world-size]]
         [gloom.entities.backpack :only [make-backpack]]
-        [gloom.core :only [new-game]]
         [gloom.ui.quil-setup :only [setup]]
         [gloom.ui.quil-key :only [process-input]]
         [gloom.ui.quil-text :only [draw-text draw-text-centered]]
@@ -12,22 +11,15 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-(defn get-viewport-coords [screen-size player-location game]
-  (let [[vcols vrows] screen-size
-        location (:location game)
-        [center-x center-y] player-location
-        tiles (:tiles (:world game))
-        map-rows (count tiles)
-        map-cols (count (first tiles))
-        start-x (max 0 (- center-x (int (/ vcols 2))))
-        start-y (max 0 (- center-y (int (/ vrows 2))))
-        end-x (+ start-x vcols)
-        end-x (min end-x map-cols)
-        end-y (+ start-y vrows)
-        end-y (min end-y map-rows)
-        start-x (- end-x vcols)
-        start-y (- end-y vrows)]
-    [start-x start-y end-x end-y]))
+(defn get-viewport-coords [screen-center {:keys [options] :as game} ]
+  (let [[cols rows] (:screen-size options)
+        [center-x center-y] screen-center
+        [map-cols map-rows] world-size
+        start-x (max 0 (- center-x (int (/ cols 2))))
+        start-y (max 0 (- center-y (int (/ rows 2))))
+        end-x (min (+ start-x cols) map-cols)
+        end-y (min (+ start-y rows) map-rows)]
+    [(- end-x cols) (- end-y rows) end-x end-y]))
 
 (defn tile-kind-lookup [kind]
   (cond
@@ -103,18 +95,18 @@
       (draw-text 0 i tile-map msg))))
 
 (defn draw-hud [game tile-map]
-  (let [y (dec (second screen-size))
+  (let [y (dec (second (get-in game [:options :screen-size])))
         player (get-in game [:world :entities :player])
         display-word (str "health: " (:hp player) "/" (:max-hp player) " exp: "(:exp player))]
-    (clear-row y tile-map)
+    (clear-row y (get-in game [:options :screen-size]) tile-map)
     (draw-text 0 y tile-map display-word)))
 
 (defmethod draw-ui :play [state ui game]
   (let [world (:world game)
         player (get-in world [:entities :player])]
     (draw-world
-      screen-size
-      (get-viewport-coords screen-size (:location player) game)
+      (get-in game [:options :screen-size])
+      (get-viewport-coords (:location player) game)
       world
       (:tile-map state))
     (draw-messages world 2 (:messages player) (:tile-map state))
@@ -131,13 +123,12 @@
         y (- y start-y)]
     (invert-tile x y)))
 
-(defmethod draw-ui :cursor [state ui game]
-   (let [world (:world game)
-         player (get-in world [:entities :player])
-         viewport-coordinates (get-viewport-coords screen-size (:location player) game)]
+(defmethod draw-ui :cursor [state ui {:keys [world options] :as game}]
+   (let [player (get-in world [:entities :player])
+         viewport-coordinates (get-viewport-coords (:location player) game)]
      (draw-world
-       screen-size
-       (get-viewport-coords screen-size (:location player) game)
+       (:screen-size options)
+       viewport-coordinates
        world
        (:tile-map state))
      (draw-cursor viewport-coordinates state)))
@@ -150,8 +141,9 @@
 
 (q/defsketch gloom-sketch
   :title "gloom"
-  :size [(* (first  screen-size) tile-size)
-         (* (second screen-size) tile-size)]
+  :size (let [screen-size [45 24]]
+          [(* (first  screen-size) tile-size)
+           (* (second screen-size) tile-size)])
   :setup setup
   :draw draw
   :key-pressed process-input

@@ -7,8 +7,7 @@
         [gloom.entities.bunny :only [make-bunny]]
         [gloom.entities.apple :only [make-apple]]
         [gloom.core :only [new-game]]
-        [gloom.entities.player :only [make-player]]
-)
+        [gloom.entities.player :only [make-player]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -54,7 +53,6 @@
        n))
 
 (defn populate-world [world]
-;;   (let [world (assoc-in world [:entities :player] (make-player world))]
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
@@ -75,14 +73,11 @@
         (pop-ui)
         (push-ui (->UI :play)))))
 
-
-
-
 (defn setup []
   (q/background 0)
   (q/frame-rate 15)
 
-  (let [game  (reset-game (new-game))
+  (let [game  (reset-game (new-game {:screen-size [45 24]}))
         tiles (get-in game [:world :tiles])
         base-image (q/load-image "resources/monochrome.png")]
     (while (not (q/loaded? base-image))

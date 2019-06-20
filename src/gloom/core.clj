@@ -6,7 +6,7 @@
         [gloom.entities.core :only [tick]])
   (:require [lanterna.screen :as s]))
 
-(defrecord Game [world uis input tick-skip])
+(defrecord Game [world uis input tick-skip options])
 
 (defn tick-entity [world entity]
   (tick entity world))
@@ -36,13 +36,13 @@
         :else
         (recur (process-input (dissoc game :input) input))))))
 
-(defn new-game []
-  (assoc (->Game
-              nil
-              [(->UI :start)]
-              nil
-              nil)
-          :location [40 20]))
+(defn new-game [options]
+  (->Game
+    nil
+    [(->UI :start)]
+    nil
+    nil
+    options))
 
 (defn main
   ([screen-type] (main screen-type false))
@@ -63,4 +63,4 @@
                       :else :auto)]
     (main screen-type true)))
 
-(-main ":swing")
+;; (-main ":swing")

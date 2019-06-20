@@ -15,7 +15,6 @@
       last))
 
 (def tile-size 16)
-(def screen-size [45 24])
 
 (defn- get-tile [id tile-map]
   (let [result (id tile-map)]
@@ -67,7 +66,7 @@
           y (range start-y end-y)]
     (invert-tile x y)))
 
-(defn clear-screen [tile-map]
+(defn clear-screen [screen-size tile-map]
   (let [[cols, rows] screen-size
         blank (:0 tile-map)]
     (when (q/loaded? blank)
@@ -75,7 +74,7 @@
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
 
-(defn clear-row [y tile-map]
+(defn clear-row [y screen-size tile-map]
   (let [[cols, rows] screen-size]
     (doseq [x (range cols)]
       (draw-tile x y tile-map :0))))

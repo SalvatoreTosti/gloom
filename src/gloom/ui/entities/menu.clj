@@ -1,7 +1,7 @@
 (ns gloom.ui.entities.menu
   (:use [gloom.entities.core :only [Entity get-id add-aspect]]
         [gloom.ui.entities.aspects.selection :only [Selection]]
-        [gloom.ui.core :only [screen-size clear-screen]]
+        [gloom.ui.core :only [clear-screen]]
         [gloom.ui.quil-text :only [draw-text-centered text-center-start draw-text invert-word]])
   (:require [lanterna.screen :as s]))
 
@@ -32,9 +32,9 @@
            (draw-text 0 (+ x start-offset) tile-map (nth strings x)))))
 
 (defn draw-menu [state {:keys [items item-pairs header selection] :as this} game]
-  (clear-screen (:tile-map state))
-  (draw-text-centered 0 (first screen-size) (:tile-map state) header)
-  (-> (first screen-size)
+  (clear-screen (get-in game [:options :screen-size]) (:tile-map state))
+  (draw-text-centered 0 (first (get-in game [:options :screen-size])) (:tile-map state) header)
+  (-> (first (get-in game [:options :screen-size]))
       (text-center-start  header)
       (invert-word 0 header))
   (draw-string-list 1 (:tile-map state) (map second item-pairs)))
