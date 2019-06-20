@@ -4,7 +4,7 @@
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.core :only [new-game]]
         [gloom.ui.quil-setup :only [setup]]
-        [gloom.ui.quil-key :only [key-pressed]]
+        [gloom.ui.quil-key :only [process-input]]
         [gloom.ui.quil-text :only [draw-text draw-text-centered]]
         [gloom.ui.entities.menu :only [make-menu draw-menu]]
         [gloom.entities.aspects.renderable :only [color image]]
@@ -137,8 +137,6 @@
         y (- y start-y)]
     (draw-tile x y (:tile-map state) :3 :red)))
 
-;;   )
-
 (defmethod draw-ui :cursor [state ui game]
   (let [world (:world game)
         {:keys [tiles entities]} world
@@ -170,5 +168,5 @@
          (* (second screen-size) tile-size)]
   :setup setup
   :draw draw
-  :key-pressed key-pressed
+  :key-pressed process-input
   :middleware [m/fun-mode])

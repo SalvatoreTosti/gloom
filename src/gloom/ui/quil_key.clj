@@ -17,18 +17,8 @@
   (assoc-in game [:world :entities :player :messages] []))
 
 (defn process-tick [game]
-;;   (println "in: " (get-in game [:world :entities :player :messages]))
-  (let [new-game
   (-> game
-      (update-in [:world] tick-all)
-;;       (update-in [:world :tick] inc)
-      )]
-;;       (println (get-in new-game [:world :entities :player :messages]))
-
-   new-game ))
-;;               (let [game (update-in game [:world] tick-all)]
-;;                     game (clear-messages game)]
-;;                 game))
+      (update-in [:world] tick-all)))
 
 (defmulti process-input
   (fn [state key-information]
@@ -70,10 +60,6 @@
       :q (update-in state [:game] pop-ui)
       state)))
 
-(defn update-location [cursor-ui dir]
-;;   (println cursor-ui dir)
-  (update cursor-ui :location destination-coords dir))
-
 (defmethod process-input :cursor [state key-information]
   (let [cursor-ui (-> state
                       :game
@@ -94,6 +80,3 @@
              (update-in [:game] push-ui (move-cursor cursor-ui :e)))
       :e (update-in state [:game] pop-ui)
      state)))
-
-(defn key-pressed [state key-information]
-  (process-input state key-information))
