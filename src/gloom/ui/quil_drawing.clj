@@ -1,5 +1,5 @@
 (ns gloom.ui.quil-drawing
-  (:use [gloom.ui.core :only [->UI screen-size tile-size draw-tile invert-tile push-ui pop-ui peek-ui clear-screen]]
+  (:use [gloom.ui.core :only [->UI screen-size tile-size draw-tile invert-tile push-ui pop-ui peek-ui clear-screen clear-row]]
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord]]
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.core :only [new-game]]
@@ -11,11 +11,6 @@
         [gloom.utils :only [enumerate]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
-
-(defn clear-row [y tile-map]
-  (let [[cols, rows] screen-size]
-    (doseq [x (range cols)]
-      (draw-tile x y tile-map :0))))
 
 (defn get-viewport-coords [screen-size player-location game]
   (let [[vcols vrows] screen-size

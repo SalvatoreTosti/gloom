@@ -74,3 +74,8 @@
       (doall (for [x (range cols)
                    y (range rows)]
                (q/image blank (* x tile-size) (* y tile-size)))))))
+
+(defn clear-row [y tile-map]
+  (let [[cols, rows] screen-size]
+    (doseq [x (range cols)]
+      (draw-tile x y tile-map :0))))
