@@ -31,13 +31,16 @@
   (dorun (for [x (range (count strings))]
            (draw-text 0 (+ x start-offset) tile-map (nth strings x)))))
 
-(defn draw-menu [state {:keys [items item-pairs header selection] :as this} game]
-  (clear-screen (get-in game [:options :screen-size]) (:tile-map state))
-  (draw-text-centered 0 (first (get-in game [:options :screen-size])) (:tile-map state) header)
-  (-> (first (get-in game [:options :screen-size]))
-      (text-center-start  header)
-      (invert-word 0 header))
-  (draw-string-list 1 (:tile-map state) (map second item-pairs)))
+(defn draw-menu [state
+                 {:keys [items item-pairs header selection] :as this}
+                 {:keys [options] :as game}]
+  (let [screen-size (:screen-size options)]
+    (clear-screen screen-size (:tile-map state))
+    (draw-text-centered 0 (first screen-size) (:tile-map state) header)
+    (-> (first screen-size)
+        (text-center-start  header)
+        (invert-word 0 header))
+    (draw-string-list 1 (:tile-map state) (map second item-pairs))))
 
 (defn get-selection [{:keys [items item-pairs selection] :as this}]
   (let [selection (:selection this)

@@ -94,11 +94,12 @@
     (doseq [[i msg] (enumerate messages)]
       (draw-text 0 i tile-map msg))))
 
-(defn draw-hud [game tile-map]
-  (let [y (dec (second (get-in game [:options :screen-size])))
-        player (get-in game [:world :entities :player])
+(defn draw-hud [{:keys [world options] :as game} tile-map]
+  (let [screen-size (:screen-size options)
+        y (dec (second screen-size))
+        player (get-in world [:entities :player])
         display-word (str "health: " (:hp player) "/" (:max-hp player) " exp: "(:exp player))]
-    (clear-row y (get-in game [:options :screen-size]) tile-map)
+    (clear-row y screen-size tile-map)
     (draw-text 0 y tile-map display-word)))
 
 (defmethod draw-ui :play [state ui game]
