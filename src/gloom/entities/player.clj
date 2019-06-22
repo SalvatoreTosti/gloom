@@ -26,7 +26,9 @@
                  :max-hp 10
                  :hp 10
                  :attack 2
-                 :exp 0}))
+                 :exp 0
+                 :attack-dice {:d4 1 :d6 2}
+                 }))
 
 (extend-type Player Entity
   (tick [this world]
