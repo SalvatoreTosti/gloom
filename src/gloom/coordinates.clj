@@ -20,10 +20,16 @@
   [dir]
   (directions dir))
 
+(defn destination-coords-rec [location dirs accumulator]
+  (if (empty? dirs) accumulator
+    (let [coord (offset-coords location (dir-to-offset (first dirs)))]
+      (destination-coords-rec coord (rest dirs) (conj accumulator coord)))))
+
 (defn destination-coords
-  "Take an origin's coords and a direction and return the destination's coords."
-  [origin dir]
-  (offset-coords origin (dir-to-offset dir)))
+  [origin & args]
+  (let [coordinates (destination-coords-rec origin args [])]
+    (if (= 1 (count coordinates)) (first coordinates)
+      coordinates)))
 
 (defn neighbors
   [origin]
