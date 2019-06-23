@@ -6,6 +6,7 @@
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
+        [gloom.entities.rat :only [make-rat]]
         [gloom.entities.apple :only [make-apple]]
         [gloom.entities.grass :only [make-grass]]
         [gloom.core :only [new-game]]
@@ -61,6 +62,7 @@
     (-> world
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
+        (add-creatures make-rat 20)
         (add-creatures make-apple 30)
         (add-creatures make-grass 300)
         ))

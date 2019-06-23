@@ -44,10 +44,7 @@
      (when (q/loaded? img)
        (q/image img (* x tile-size) (* y tile-size)))))
   ([x y tile-map id color]
-   (let [color (translate-color color)
-        r (first color)
-        g (second color)
-        b (nth color 2)]
+   (let [[r g b] (translate-color color)]
   (q/tint r g b)
   (draw-tile x y id tile-map)
   (q/no-tint))))
