@@ -1,6 +1,7 @@
 (ns gloom.ui.quil-drawing
   (:use [gloom.ui.core :only [->UI tile-size draw-tile invert-tile push-ui pop-ui peek-ui clear-row]]
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord world-size]]
+        [gloom.coordinates :only [destination-coords]]
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.ui.quil-setup :only [setup]]
         [gloom.ui.quil-key :only [process-input]]
@@ -21,9 +22,39 @@
         end-y (min (+ start-y rows) map-rows)]
     [(- end-x cols) (- end-y rows) end-x end-y]))
 
-(defn tile-kind-lookup [kind]
+
+(defn draw-wall [location world]
+  (let [north (= :wall (get-tile-kind world (destination-coords location :n)))
+        east (= :wall (get-tile-kind world (destination-coords location :e)))
+        south (= :wall (get-tile-kind world (destination-coords location :s)))
+        west (= :wall (get-tile-kind world (destination-coords location :w)))]
+    (cond
+      (and
+        (not north)
+        (not east)) :20
+      (and
+        (not east)
+        (not south)) :84
+      (and
+        (not south)
+        (not west)) :82
+      (and
+        (not west)
+        (not north)) :18
+      (not north) :19
+      (not east) :52
+      (not south) :83
+      (not west) :50
+
+
+      :else :51)
+;;   (cond (check-tile world dest #{:wall})))
+  ))
+
+
+(defn tile-kind-lookup [kind location world]
   (cond
-    (= kind :wall) :19
+    (= kind :wall) (draw-wall location world)
     (= kind :floor) :0
     :else 0))
 
@@ -38,7 +69,7 @@
     (doseq [entity entities]
       (draw-entity start-x start-y entity tile-map))))
 
-(defn draw-terrain [screen-size viewport-coordinates tiles tile-map]
+(defn draw-terrain [screen-size viewport-coordinates tiles tile-map world]
   (let [[view-cols view-rows] screen-size
         [start-x start-y end-x end-y] viewport-coordinates]
     (doseq [[vrow-idx mrow-idx] (map vector
@@ -47,10 +78,10 @@
             :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
       (doseq [col (range view-cols)
               :let [{:keys [kind color]} (row-tiles col)]]
-          (draw-tile col vrow-idx tile-map (tile-kind-lookup kind) color)))))
+          (draw-tile col vrow-idx tile-map (tile-kind-lookup kind [(+ start-x col) (+ start-y vrow-idx)] world) color)))))
 
 (defn draw-world [screen-size viewport-coordinates {:keys [tiles entities] :as world} tile-map]
-  (draw-terrain screen-size viewport-coordinates tiles tile-map)
+  (draw-terrain screen-size viewport-coordinates tiles tile-map world)
   (draw-entities viewport-coordinates (vals entities) tile-map))
 
 ;; (defmethod draw-ui :win [ui game])
