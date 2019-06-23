@@ -2,10 +2,12 @@
   (:use [gloom.ui.core :only [->UI tile-size]]
         [gloom.world :only [random-world get-tile-kind get-tile-by-coord find-empty-tile]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
+        [gloom.entities.aspects.positionable :only [Positionable position]]
         [gloom.entities.backpack :only [make-backpack]]
         [gloom.entities.lichen :only [make-lichen]]
         [gloom.entities.bunny :only [make-bunny]]
         [gloom.entities.apple :only [make-apple]]
+        [gloom.entities.grass :only [make-grass]]
         [gloom.core :only [new-game]]
         [gloom.entities.player :only [make-player]])
   (:require [quil.core :as q]
@@ -44,7 +46,10 @@
 (def get-tiles (memoize get-tile-map))
 
 (defn add-creature [world make-creature]
-  (let [creature (make-creature (find-empty-tile world))]
+  (let [creature (make-creature (find-empty-tile world))
+        creature (if
+                   (satisfies? Positionable creature) (position creature world)
+                   creature)]
     (assoc-in world [:entities (:id creature)] creature)))
 
 (defn add-creatures [world make-creature n]
@@ -57,6 +62,7 @@
         (add-creatures make-lichen 30)
         (add-creatures make-bunny 20)
         (add-creatures make-apple 30)
+        (add-creatures make-grass 300)
         ))
 
 (defn reset-game [game]

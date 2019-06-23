@@ -35,6 +35,7 @@
     :sky-blue [0 191 255]
     :lavender [230 230 250]
     :yellow [255 250 205]
+    :forest-green [34 139 34]
     RGB-values))
 
 (defn draw-tile
