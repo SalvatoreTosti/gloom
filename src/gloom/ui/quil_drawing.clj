@@ -31,6 +31,11 @@
     (cond
       (and
         (not north)
+        (not east)
+        (not south)
+        (not west)) :51
+      (and
+        (not north)
         (not east)) :20
       (and
         (not east)
@@ -45,10 +50,7 @@
       (not east) :52
       (not south) :83
       (not west) :50
-
-
       :else :51)
-;;   (cond (check-tile world dest #{:wall})))
   ))
 
 
