@@ -1,6 +1,6 @@
 (ns gloom.ui.quil-setup
   (:use [gloom.ui.core :only [->UI tile-size]]
-        [gloom.world :only [random-world get-tile-kind get-tile-by-coord find-empty-tile]]
+        [gloom.world :only [random-world empty-world get-tile-kind get-tile-by-coord find-empty-tile]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
         [gloom.entities.aspects.positionable :only [Positionable position]]
         [gloom.entities.backpack :only [make-backpack]]
@@ -68,15 +68,16 @@
         ))
 
 (defn reset-game [game]
-  (let [world  (random-world)
+  (let [world  (empty-world) ;;(random-world)
         player (make-player world)
-        player (assoc player :inventory (make-backpack))]
+        player (assoc player :inventory (make-backpack))
+        player (assoc player :location [80 25])]
 
     (-> game
         (assoc :world world)
         (assoc-in [:world :tick] 0)
         (assoc-in [:world :entities :player] player)
-        (update :world populate-world)
+;;         (update :world populate-world)
 ;;         (assoc-in [:world :entities :player :inventory] (make-backpack))
         (pop-ui)
         (push-ui (->UI :play)))))

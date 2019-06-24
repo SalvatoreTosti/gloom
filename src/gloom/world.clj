@@ -1,5 +1,5 @@
 (ns gloom.world
-  (:use [gloom.coordinates :only [neighbors]]
+  (:use [gloom.coordinates :only [rectangle square neighbors destination-coords]]
         [gloom.utils :only [abs]]))
 
 (def world-size [160 50])
@@ -26,6 +26,16 @@
             (random-row []
               (vec (repeatedly cols random-tile)))]
       (vec (repeatedly rows random-row)))))
+
+(defn empty-tiles []
+  (let [[cols rows] world-size]
+    (letfn [(random-tile []
+              (tiles (rand-nth [:floor])))
+            (random-row []
+              (vec (repeatedly cols random-tile)))]
+      (vec (repeatedly rows random-row)))))
+
+;; (empty-tiles)
 
 (defn get-smoothed-tile [block]
   (let [tile-counts (frequencies (map :kind block))
@@ -60,11 +70,6 @@
 
 (defn smooth-world [{:keys [tiles] :as world}]
   (assoc world :tiles (get-smoothed-tiles tiles)))
-
-(defn random-world []
-  (let [world (->World (random-tiles))
-        world (nth (iterate smooth-world world) 3)]
-    world))
 
 (defn get-tile [world coord]
   (get-tile-from-tiles (:tiles world) coord))
@@ -115,3 +120,32 @@
    (filter #(<= (radial-distance coord (:location %))
                 radius)
            (vals (:entities world)))))
+
+(defn get-tiles-around
+  ([world coord] (get-tiles-around world coord 1))
+  ([world coord radius]
+     (map
+       #(get-tile-from-tiles (:tiles world) %)
+       (square coord radius))))
+
+(defn set-tiles [world locations tile-kind]
+  (if (empty? locations)
+    world
+    (let [location (first locations)
+          kind (tile-kind tiles)
+          world (set-tile world location kind)]
+        (set-tiles world (rest locations) tile-kind))))
+
+(defn spawn-room [world location]
+  (-> (set-tiles world (square location 3) :wall)
+      (set-tiles (square location 1) :floor)
+      (set-tiles (rectangle location 1 4) :floor)))
+
+(defn random-world []
+  (let [world (->World (random-tiles))
+        world (nth (iterate smooth-world world) 3)]
+    world))
+
+(defn empty-world []
+  (-> (->World (empty-tiles))
+      (spawn-room [65, 20])))
