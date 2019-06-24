@@ -2,11 +2,11 @@
   (:use [gloom.entities.core :only [Entity get-id add-aspect]]
         [gloom.entities.aspects.destructible :only [Destructible]]
         [gloom.entities.aspects.receiver :only [send-message-nearby]]
-        [gloom.world :only [find-empty-neighbor]]
+        [gloom.world :only [find-empty-neighbor get-entities-around]]
         [gloom.entities.aspects.renderable :only [Renderable]]
         [gloom.entities.aspects.describable :only [Describable]]))
 
-(defrecord Lichen [id glyph color location max-hp hp name])
+(defrecord Lichen [id glyph color location max-hp hp name type])
 
 (defn make-lichen [location]
   (map->Lichen {
@@ -16,10 +16,16 @@
                  :location location
                  :max-hp 1
                  :hp 1
-                 :name "lichen"}))
+                 :name "lichen"
+                 :type :lichen}))
 
-(defn should-grow []
-  (< (rand) 0.01))
+(defn should-grow [this world]
+  (let [entities (get-entities-around world (:location this) 5)
+        lichens (filter #(= :lichen (:type %)) entities)]
+    (println (count lichens))
+    (if (< (count lichens) 8)
+      (< (rand) 0.01)
+      false)))
 
 (defn grow [{:keys [location]} world]
   (if-let [target (find-empty-neighbor world location)]
@@ -31,7 +37,7 @@
 
 (extend-type Lichen Entity
   (tick [this world]
-        (if (should-grow)
+        (if (should-grow this world)
           (grow this world)
           world)))
 
