@@ -173,12 +173,13 @@
       (peek-ui (:game state))
       (:game state)))
 
-(q/defsketch gloom-sketch
-  :title "gloom"
-  :size (let [screen-size [45 24]]
-          [(* (first  screen-size) tile-size)
-           (* (second screen-size) tile-size)])
-  :setup setup
-  :draw draw
-  :key-pressed process-input
-  :middleware [m/fun-mode])
+(defn make-sketch []
+  (q/defsketch gloom-sketch
+    :title "gloom"
+    :size (let [screen-size [45 24]]
+            [(* (first  screen-size) tile-size)
+             (* (second screen-size) tile-size)])
+    :setup setup
+    :draw draw
+    :key-pressed process-input
+    :middleware [m/fun-mode]))
