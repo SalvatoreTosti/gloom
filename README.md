@@ -8,12 +8,17 @@ Rougelike based on [Caves of Clojure](http://stevelosh.com/blog/2012/07/caves-of
 ## Getting Started
 
 1. Clone the project
-2. Run the project via Leiningen using `lein run :swing`. 
+2. Run the project via Leiningen using `lein run :swing`.
 You can use just `lein run`, but this mode has been less reliable for me.
 
 ### Prerequisites
 
 You need to have Leiningen installed on your machine.
+
+## Images
+
+![gloom](doc/gloom.png)
+
 
 ### Installing
 
@@ -50,5 +55,3 @@ your option) any later version.
 
 * [Steve Losh's Caves of Clojure](http://stevelosh.com/blog/2012/07/caves-of-clojure-01/)
 * Art by [kenny.nl](https://www.kenney.nl/)
-
-
