@@ -22,7 +22,6 @@
 (defn should-grow [this world]
   (let [entities (get-entities-around world (:location this) 5)
         lichens (filter #(= :lichen (:type %)) entities)]
-    (println (count lichens))
     (if (< (count lichens) 8)
       (< (rand) 0.01)
       false)))
