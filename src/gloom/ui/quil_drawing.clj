@@ -167,7 +167,7 @@
        (:tile-map state))
      (draw-cursor viewport-coordinates state)))
 
-(defn draw [state]
+(defn draw-game [state]
     (draw-ui
       state
       (peek-ui (:game state))
@@ -180,6 +180,6 @@
             [(* (first  screen-size) tile-size)
              (* (second screen-size) tile-size)])
     :setup setup
-    :draw draw
+    :draw draw-game
     :key-pressed process-input
     :middleware [m/fun-mode]))

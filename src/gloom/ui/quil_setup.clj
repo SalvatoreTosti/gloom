@@ -1,6 +1,6 @@
 (ns gloom.ui.quil-setup
   (:use [gloom.ui.core :only [->UI tile-size]]
-        [gloom.world :only [random-world empty-world get-tile-kind get-tile-by-coord find-empty-tile]]
+        [gloom.world :only [random-world empty-world spawn-room get-tile-kind get-tile-by-coord find-empty-tile]]
         [gloom.ui.core :only [->UI push-ui pop-ui]]
         [gloom.entities.aspects.positionable :only [Positionable position]]
         [gloom.entities.backpack :only [make-backpack]]
@@ -67,33 +67,39 @@
         (add-creatures make-grass 300)
         ))
 
-(defn reset-game [game]
-  (let [world  (empty-world) ;;(random-world)
+(defn- reset-game [game]
+  (let [world  (random-world)
+        world  (spawn-room world [60, 20] 5 5)
         player (make-player world)
         player (assoc player :inventory (make-backpack))
-        player (assoc player :location [80 25])]
+        player (assoc player :location [80 25])
+        ]
 
     (-> game
         (assoc :world world)
         (assoc-in [:world :tick] 0)
         (assoc-in [:world :entities :player] player)
-;;         (update :world populate-world)
+        (update :world populate-world)
 ;;         (assoc-in [:world :entities :player :inventory] (make-backpack))
         (pop-ui)
         (push-ui (->UI :play)))))
 
-(defn setup []
-  (q/background 0)
-  (q/frame-rate 15)
-
+(defn reset-state-game [state]
   (let [game  (reset-game (new-game {:screen-size [45 24]}))
-        tiles (get-in game [:world :tiles])
         base-image (q/load-image "resources/monochrome.png")]
     (while (not (q/loaded? base-image))
       nil)
-    {:img base-image
-     :tile-map (get-tiles base-image 32 32)
-     :counter 0
-     :game game
-     :x 40
-     :y 20}))
+    (->
+      state
+      (assoc :img base-image)
+      (assoc :tile-map (get-tiles base-image 32 32))
+      (assoc :counter 0)
+      (assoc :game game)
+      (assoc :x 40)
+      (assoc :y 20))))
+
+(defn setup []
+  (q/background 0)
+  (q/frame-rate 15)
+  (reset-state-game {}))
+

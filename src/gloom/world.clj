@@ -4,8 +4,12 @@
 
 (def world-size [160 50])
 
-(defrecord World [tiles])
+(defrecord World [tiles size])
 (defrecord Tile [kind color])
+
+(defn make-world [tiles size]
+  (map->World {:tiles tiles
+               :size size}))
 
 (def tiles
   {:floor (->Tile :floor :light-gray)
@@ -19,7 +23,7 @@
   (let [[cols rows] world-size]
     [(rand-int cols) (rand-int rows)]))
 
-(defn random-tiles []
+(defn random-tiles [world-size]
   (let [[cols rows] world-size]
     (letfn [(random-tile []
               (tiles (rand-nth [:floor :wall])))
@@ -27,7 +31,7 @@
               (vec (repeatedly cols random-tile)))]
       (vec (repeatedly rows random-row)))))
 
-(defn empty-tiles []
+(defn empty-tiles [world-size]
   (let [[cols rows] world-size]
     (letfn [(random-tile []
               (tiles (rand-nth [:floor])))
@@ -136,16 +140,22 @@
           world (set-tile world location kind)]
         (set-tiles world (rest locations) tile-kind))))
 
-(defn spawn-room [world location]
-  (-> (set-tiles world (square location 3) :wall)
-      (set-tiles (square location 1) :floor)
-      (set-tiles (rectangle location 1 4) :floor)))
+(defn spawn-room [world location size wall-width]
+  (-> world
+      (set-tiles (square location (+ size wall-width)) :wall)
+      (set-tiles (square location size) :floor)
+      (set-tiles (rectangle location 1 (inc (+ size wall-width))) :floor)))
 
-(defn random-world []
-  (let [world (->World (random-tiles))
+(defn random-world
+  ([]
+   (random-world [160 50]))
+  ([size]
+  (let [world (make-world (random-tiles size) size)
         world (nth (iterate smooth-world world) 3)]
-    world))
+    world)))
 
-(defn empty-world []
-  (-> (->World (empty-tiles))
-      (spawn-room [65, 20])))
+(defn empty-world
+  ([]
+   (empty-world [160 50]))
+  ([size]
+  (make-world (empty-tiles size) size)))

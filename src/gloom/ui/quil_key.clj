@@ -80,3 +80,6 @@
              (update-in [:game] push-ui (move-cursor cursor-ui :e)))
       :e (update-in state [:game] pop-ui)
      state)))
+
+(defn process-input-game [state key-information]
+  (process-input state key-information))
