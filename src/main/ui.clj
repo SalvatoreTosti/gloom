@@ -3,7 +3,9 @@
          [gloom.ui.quil-drawing :only [draw-game]]
          [gloom.ui.quil-key :only [process-input-game]]
          [gloom.ui.core :only [tile-size]]
-         [gloom.ui.quil-text :only [draw-text draw-text-centered]])
+         [gloom.ui.quil-text :only [draw-text draw-text-centered]]
+         [editor.ui.drawing :only [draw-editor]]
+         )
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -46,10 +48,12 @@
   (draw-game state))
 
 (defmethod draw-main :edit [state]
-  (draw-text-centered (dec (int (/ (second (:screen-size state)) 2)))
-                      (first (:screen-size state))
-                      (:tile-map state)
-                      "edit"))
+  (draw-editor state)
+;;   (draw-text-centered (dec (int (/ (second (:screen-size state)) 2)))
+;;                       (first (:screen-size state))
+;;                       (:tile-map state)
+;;                       "edit")
+  )
 
 (defmulti process-input
   (fn [state key-information]
