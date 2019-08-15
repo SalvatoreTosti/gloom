@@ -24,10 +24,16 @@
     (:mode state)))
 
 (defmethod draw-main :start [state]
-  (draw-text-centered (dec (int (/ (second (:screen-size state)) 2)))
+  (let [center-y (dec (int (/ (second (:screen-size state)) 2)))]
+  (draw-text-centered center-y
                       (first (:screen-size state))
                       (:tile-map state)
-                      "gloom"))
+                      "gloom")
+  (draw-text-centered (inc center-y)
+                      (first (:screen-size state))
+                       (:tile-map state)
+                      "Press a key!")
+  ))
 
 (defmethod draw-main :play [state]
   (draw-game state))
