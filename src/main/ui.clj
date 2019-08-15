@@ -25,15 +25,22 @@
 
 (defmethod draw-main :start [state]
   (let [center-y (dec (int (/ (second (:screen-size state)) 2)))]
-  (draw-text-centered center-y
-                      (first (:screen-size state))
-                      (:tile-map state)
-                      "gloom")
-  (draw-text-centered (inc center-y)
-                      (first (:screen-size state))
-                       (:tile-map state)
-                      "Press a key!")
-  ))
+    (draw-text-centered center-y
+                        (first (:screen-size state))
+                        (:tile-map state)
+                        "gloom")
+    (draw-text-centered (inc center-y)
+                        (first (:screen-size state))
+                        (:tile-map state)
+                        "Press a key!")
+    (draw-text-centered (+ 2 center-y)
+                        (first (:screen-size state))
+                        (:tile-map state)
+                        "p : launches the game")
+    (draw-text-centered (+ 3 center-y)
+                        (first (:screen-size state))
+                        (:tile-map state)
+                        "e : launches the editor")))
 
 (defmethod draw-main :play [state]
   (draw-game state))

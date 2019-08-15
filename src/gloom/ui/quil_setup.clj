@@ -71,10 +71,7 @@
   (let [world  (random-world)
         world  (spawn-room world [60, 20] 5 5)
         player (make-player world)
-        player (assoc player :inventory (make-backpack))
-        player (assoc player :location [80 25])
-        ]
-
+        player (assoc player :inventory (make-backpack))]
     (-> game
         (assoc :world world)
         (assoc-in [:world :tick] 0)
@@ -95,11 +92,9 @@
       (assoc :tile-map (get-tiles base-image 32 32))
       (assoc :counter 0)
       (assoc :game game)
-      (assoc :x 40)
-      (assoc :y 20))))
+      )))
 
 (defn setup []
   (q/background 0)
   (q/frame-rate 15)
   (reset-state-game {}))
-
