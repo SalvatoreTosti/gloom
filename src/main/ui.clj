@@ -2,7 +2,7 @@
    (:use [gloom.ui.quil-setup :only [reset-state-game get-tiles]]
          [gloom.ui.quil-drawing :only [draw-game]]
          [gloom.ui.quil-key :only [process-input-game]]
-         [gloom.ui.core :only [tile-size]]
+         [gloom.ui.core :only [tile-size clear-screen]]
          [gloom.ui.quil-text :only [draw-text draw-text-centered]]
          [editor.ui.drawing :only [draw-editor make-editor]]
          [editor.ui.input :only [process-input-editor]]
@@ -24,6 +24,8 @@
 
 (defmulti draw-main
   (fn [state]
+    (clear-screen  (:screen-size state)  (:tile-map state))
+
     (:mode state)))
 
 (defmethod draw-main :start [state]

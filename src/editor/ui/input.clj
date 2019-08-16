@@ -4,8 +4,11 @@
   (:require [quil.core :as q]))
 
 (defn process-input-editor [state key-information]
-  (println key-information)
-  state)
+   (case (:key key-information)
+      :q (-> state
+             (dissoc :editor)
+             (assoc :mode :start))
+     state))
 
 (defn on-click [state]
   (let [coordinates [(q/mouse-x) (q/mouse-y)]

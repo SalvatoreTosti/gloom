@@ -3,3 +3,5 @@
 
 (defn -main []
   (make-sketch))
+
+(-main)

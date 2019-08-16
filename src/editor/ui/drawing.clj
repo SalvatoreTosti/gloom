@@ -61,7 +61,6 @@
 (defn draw-cursor [state]
   (let [current-x (/ (round-down (q/mouse-x) tile-size) tile-size)
         current-y (/ (round-down (q/mouse-y) tile-size) tile-size)]
-;;     (println current-x " " current-y)
   (draw-tile current-x current-y (:tile-map state) :787)))
 
 (defn make-editor [state]
