@@ -14,3 +14,8 @@
   (let [coordinates [(q/mouse-x) (q/mouse-y)]
         views (get-in state [:editor :views])]
   (filter #(coordinates-in-view? coordinates %) views)))
+
+(defn update-editor [state]
+   (when (q/mouse-button)
+    (println (on-click state)))
+  state)

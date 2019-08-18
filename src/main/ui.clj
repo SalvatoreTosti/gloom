@@ -5,7 +5,7 @@
          [gloom.ui.core :only [tile-size clear-screen]]
          [gloom.ui.quil-text :only [draw-text draw-text-centered]]
          [editor.ui.drawing :only [draw-editor make-editor]]
-         [editor.ui.input :only [process-input-editor]]
+         [editor.ui.input :only [process-input-editor update-editor]]
          )
   (:require [quil.core :as q]
             [quil.middleware :as m]))
@@ -74,6 +74,19 @@
 (defmethod process-input :edit [state key-information]
   (process-input-editor state key-information))
 
+(defmulti quil-update
+  (fn [state]
+    (:mode state)))
+
+(defmethod quil-update :start [state]
+  state)
+
+(defmethod quil-update :play [state]
+  state)
+
+(defmethod quil-update :edit [state]
+  (update-editor state))
+
 (defn make-sketch []
   (q/defsketch gloom-sketch
     :title "gloom"
@@ -83,4 +96,5 @@
     :setup setup
     :draw draw-main
     :key-pressed process-input
+    :update quil-update
     :middleware [m/fun-mode]))
