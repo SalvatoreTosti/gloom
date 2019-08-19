@@ -1,6 +1,6 @@
 (ns editor.ui.views
    (:use
-     [editor.ui.core :only [get-id]]
+     [editor.ui.core :only [get-id mouse->grid]]
      [gloom.ui.core :only [clear-screen draw-tile tile-size]]
      ))
 
@@ -43,8 +43,11 @@
                         x (range start-x end-x)]
                     [x y])
         position-ids (zipmap positions display-ids)
-        position-ids (into [] position-ids)]
+        position-ids (into {} position-ids)]
   position-ids))
+
+(defn build-image-grid [[start-x start-y] [end-x end-y] state display-ids]
+  (build-image-positions [start-x start-y] [end-x end-y] display-ids))
 
 (defn- draw-image-grid [[start-x start-y] [end-x end-y] state display-ids]
   (doseq [[[x y] id] (build-image-positions
@@ -53,25 +56,35 @@
                        display-ids)]
     (draw-tile x y (:tile-map state) id)))
 
-(defn draw-list-view [view state]
+(defn draw-grid-view [view state]
   (draw-view view state)
-  (let [
-         start-x (inc (first (:position view)))
-         start-y (inc (second (:position view)))
-         end-x (dec (dec (+ start-x (:width view))))
-         end-y (dec (dec (+ start-y (:height view))))
-      ]
-    (draw-image-grid
-      [start-x start-y]
-      [end-x end-y]
-      state
-      (->> state
-           :tile-map
-           keys
-           (sort-by #(bigdec (name %)))))))
+  (draw-image-grid
+    (:start view)
+    (:end view)
+    state
+    (:display-ids view)))
 
-(defn make-grid-view [position width height outline-id cursor-id]
-  (let [view (make-view position width height outline-id cursor-id)]
+(defn on-click-grid-view [[mouse-x mouse-y] view state]
+  (let [tile-id (get (:item-positions view) (mouse->grid view))]
+    (if tile-id
+      (assoc-in state [:editor :views (:id view) :selected-id] tile-id)
+      state)))
+
+(defn make-grid-view [position width height outline-id cursor-id state]
+  (let [view (make-view position width height outline-id cursor-id)
+        start-x (inc (first (:position view)))
+        start-y (inc (second (:position view)))
+        end-x (dec (dec (+ start-x (:width view))))
+        end-y (dec (dec (+ start-y (:height view))))
+        display-ids (->> state
+                         :tile-map
+                         keys
+                         (sort-by #(bigdec (name %))))
+        item-positions (build-image-positions [start-x start-y] [end-x end-y] display-ids)]
     (-> view
-        (assoc :draw-fn draw-list-view)
-    )))
+        (assoc :start [start-x start-y])
+        (assoc :end [end-x end-y])
+        (assoc :display-ids display-ids)
+        (assoc :item-positions item-positions)
+        (assoc :draw-fn draw-grid-view)
+        (assoc :on-click-fn on-click-grid-view))))

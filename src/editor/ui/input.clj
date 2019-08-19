@@ -10,12 +10,18 @@
              (assoc :mode :start))
      state))
 
-(defn on-click [state]
-  (let [coordinates [(q/mouse-x) (q/mouse-y)]
-        views (get-in state [:editor :views])]
-  (filter #(coordinates-in-view? coordinates %) views)))
+(defn get-clicked-view [state]
+  (->> (get-in state [:editor :views])
+       vals
+       (filter #(coordinates-in-view? [(q/mouse-x) (q/mouse-y)] %))
+       first))
 
 (defn update-editor [state]
-   (when (q/mouse-button)
-    (println (on-click state)))
-  state)
+   (if (q/mouse-button)
+    (let [clicked-view (get-clicked-view state)
+          on-click-fn (:on-click-fn clicked-view)]
+      (if on-click-fn
+        (on-click-fn [(q/mouse-x) (q/mouse-y)] clicked-view state)
+        state))
+     state
+     ))

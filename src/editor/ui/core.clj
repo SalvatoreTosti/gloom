@@ -1,4 +1,8 @@
-(ns editor.ui.core)
+(ns editor.ui.core
+  (:use
+    [gloom.ui.core :only [tile-size]]
+    )
+   (:require [quil.core :as q]))
 
 (def ids (ref 0))
 
@@ -20,3 +24,11 @@
     coordinates
     (get-in view [:pixel-coordinates :start])
     (get-in view [:pixel-coordinates :end])))
+
+(defn- round-down [number base]
+  (* base (int (Math/floor (/ number base)))))
+
+(defn mouse->grid [view]
+  (let [current-x (/ (round-down (q/mouse-x) tile-size) tile-size)
+        current-y (/ (round-down (q/mouse-y) tile-size) tile-size)]
+    [current-x current-y]))
