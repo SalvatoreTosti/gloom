@@ -2,6 +2,7 @@
    (:use
      [editor.ui.core :only [get-id]]
      [editor.ui.views.grid :only [make-grid-view]]
+     [editor.ui.views.canvas :only [make-canvas-view]]
      [gloom.ui.core :only [clear-screen draw-tile tile-size]]
      [gloom.ui.quil-text :only [draw-text draw-text-centered]]
      )
@@ -22,7 +23,7 @@
 (defn make-editor [state]
  (-> state
      (add-view (make-grid-view [0 0] 10 24 :119 :787 state))
-     (add-view (make-grid-view [9 0] 36 12 :119 :787 state))))
+     (add-view (make-canvas-view [9 0] 36 12 :119 :787 state))))
 
 (defn draw-editor [state]
   (clear-screen  (:screen-size state)  (:tile-map state))
