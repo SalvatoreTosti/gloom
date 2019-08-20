@@ -1,6 +1,6 @@
 (ns editor.ui.input
    (:use
-     [editor.ui.core :only [coordinates-in-view?]])
+     [editor.ui.views.core :only [coordinates-in-view?]])
   (:require [quil.core :as q]))
 
 (defn process-input-editor [state key-information]
@@ -21,7 +21,9 @@
     (let [clicked-view (get-clicked-view state)
           on-click-fn (:on-click-fn clicked-view)]
       (if on-click-fn
-        (on-click-fn [(q/mouse-x) (q/mouse-y)] clicked-view state)
+        (on-click-fn
+          [(q/mouse-x) (q/mouse-y)]
+          clicked-view
+          state)
         state))
-     state
-     ))
+     state))

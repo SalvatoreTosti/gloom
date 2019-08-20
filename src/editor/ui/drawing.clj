@@ -1,10 +1,9 @@
 (ns editor.ui.drawing
    (:use
      [editor.ui.core :only [get-id]]
-     [editor.ui.views :only [make-grid-view draw-grid-view]]
-     [gloom.ui.core :only [clear-screen draw-tile]]
+     [editor.ui.views.grid :only [make-grid-view]]
+     [gloom.ui.core :only [clear-screen draw-tile tile-size]]
      [gloom.ui.quil-text :only [draw-text draw-text-centered]]
-     [gloom.ui.core :only [tile-size]]
      )
   (:require [quil.core :as q]
             [quil.middleware :as m]))
