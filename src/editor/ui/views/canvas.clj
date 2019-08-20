@@ -19,16 +19,13 @@
 
 (defn- draw-canvas [view state]
    (doseq [[[x y] id] (:canvas view)]
-     (draw-tile x y (:tile-map state) id))
-;;   (draw-text-relative 4 4 view state "canvas")
-  )
+     (draw-tile x y (:tile-map state) id)))
 
 (defn draw-canvas-view [view state]
   (draw-view view state)
   (draw-canvas view state))
 
 (defn- on-click-canvas-view [[mouse-x mouse-y] view state]
-;;   (println (:end view))
   (assoc-in
     state
     [:editor :views (:id view) :canvas (mouse->grid view)]
@@ -37,11 +34,9 @@
 (defn- make-blank-canvas [[start-x start-y] [end-x end-y]]
   (println [start-x start-y] [end-x end-y])
   (let [positions (for [x (range start-x end-x)
-                        y (range start-y end-y)]
+                        fy (range start-y end-y)]
                     {[x y] :0})]
-    (println positions)
     (into {} positions)))
-;;     (draw-tile x y (:tile-map state) id)))
 
 (defn make-canvas-view [position width height outline-id cursor-id state]
   (let [view (make-view position width height outline-id cursor-id)

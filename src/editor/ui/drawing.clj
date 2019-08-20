@@ -14,8 +14,10 @@
 
 (defn- draw-cursor [state]
   (let [current-x (/ (round-down (q/mouse-x) tile-size) tile-size)
-        current-y (/ (round-down (q/mouse-y) tile-size) tile-size)]
-  (draw-tile current-x current-y (:tile-map state) :787)))
+        current-x (inc current-x)
+        current-y (/ (round-down (q/mouse-y) tile-size) tile-size)
+        current-y (inc current-y)]
+  (draw-tile current-x current-y (:tile-map state) :723)))
 
 (defn- add-view [state view]
   (assoc-in state [:editor :views (:id view)] view))
@@ -26,6 +28,7 @@
      (add-view (make-canvas-view [9 0] 36 12 :119 :787 state))))
 
 (defn draw-editor [state]
+  (q/no-cursor)
   (clear-screen  (:screen-size state)  (:tile-map state))
   (draw-text-centered (dec (int (/ (second (:screen-size state)) 2)))
                       (first (:screen-size state))
