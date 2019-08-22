@@ -63,6 +63,7 @@
     (-> view
         (assoc :start [start-x start-y])
         (assoc :end [end-x end-y])
+        (assoc :selected-id :2)
         (assoc :display-ids display-ids)
         (assoc :item-positions item-positions)
         (assoc :draw-fn draw-grid-view)

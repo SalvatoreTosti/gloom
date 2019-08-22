@@ -26,19 +26,22 @@
   (draw-canvas view state))
 
 (defn- on-click-canvas-view [[mouse-x mouse-y] view state]
+  (let [palette-view-id (:palette-view-id view)
+        selected-id (get-in state [:editor :views palette-view-id :selected-id])]
+    (println palette-view-id)
   (assoc-in
     state
     [:editor :views (:id view) :canvas (mouse->grid view)]
-    (:pen-tool-id view)))
+    selected-id
+    )))
 
 (defn- make-blank-canvas [[start-x start-y] [end-x end-y]]
-  (println [start-x start-y] [end-x end-y])
   (let [positions (for [x (range start-x end-x)
-                        fy (range start-y end-y)]
+                        y (range start-y end-y)]
                     {[x y] :0})]
     (into {} positions)))
 
-(defn make-canvas-view [position width height outline-id cursor-id state]
+(defn make-canvas-view [position width height outline-id cursor-id palette-view state]
   (let [view (make-view position width height outline-id cursor-id)
         start-x (inc (first (:position view)))
         start-y (inc (second (:position view)))
@@ -47,7 +50,7 @@
     (-> view
         (assoc :start [start-x start-y])
         (assoc :end [end-x end-y])
-        (assoc :pen-tool-id :2)
+        (assoc :palette-view-id (:id palette-view))
         (assoc :canvas (make-blank-canvas [start-x start-y] [end-x end-y]))
         (assoc :draw-fn draw-canvas-view)
         (assoc :on-click-fn on-click-canvas-view))))

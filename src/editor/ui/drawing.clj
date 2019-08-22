@@ -23,9 +23,12 @@
   (assoc-in state [:editor :views (:id view)] view))
 
 (defn make-editor [state]
- (-> state
-     (add-view (make-grid-view [0 0] 10 24 :119 :787 state))
-     (add-view (make-canvas-view [9 0] 36 12 :119 :787 state))))
+    (q/frame-rate 30)
+  (let [palette-view (make-grid-view [0 0] 10 24 :119 :787 state)
+        canvas-view (make-canvas-view [9 0] 36 12 :119 :787 palette-view state)]
+    (-> state
+        (add-view palette-view)
+        (add-view canvas-view))))
 
 (defn draw-editor [state]
   (q/no-cursor)
