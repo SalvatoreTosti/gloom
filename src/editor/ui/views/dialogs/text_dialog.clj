@@ -27,7 +27,6 @@
 
 (defn add-input-as-character [state key-str])
 
-
 (defn remove-last-character [state]
   (let [
         first-dialog (first (get-in state [:editor :dialogs]))
@@ -38,11 +37,10 @@
         ]
     state))
 
-
-
 (defn- on-input [state key-information]
   (cond
     (= 8 (:key-code key-information)) (remove-last-character state)
+;;     (= 10 (:key-code key-information)) (
     (re-seq #"[a-zA-Z0-9]" (str (:raw-key key-information)))
     (let [key-str (str (:raw-key key-information))
         first-dialog (first (get-in state [:editor :dialogs]))
@@ -55,7 +53,15 @@
     state
     ))
 
-(defn make-text-dialog [position width height outline-id cursor-id state]
+(defn make-text-dialog
+  [{:keys [position
+           width
+           height
+           outline-id
+           cursor-id
+           on-ok-fn
+           on-cancel-fn
+           state]}]
   (let [view (make-view position width height outline-id cursor-id)
         start-x (inc (first (:position view)))
         start-y (inc (second (:position view)))

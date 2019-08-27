@@ -32,8 +32,15 @@
         (add-view palette-view)
         (add-view canvas-view)
         (add-view (make-entity-builder-view [9 12] 36 12 :119 :787 state))
-        (assoc-in [:editor :dialogs] [(make-text-dialog [9 12] 20 6 :119 :787 state)])
-        )))
+        (assoc-in [:editor :dialogs]
+                  [(make-text-dialog
+                     {:position [9 12]
+                      :width 20
+                      :height 6
+                      :outline-id :119
+                      :cursor-id :787
+                      :state state})]))))
+
 
 (defn draw-editor [state]
   (q/no-cursor)
