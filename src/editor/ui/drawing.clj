@@ -3,6 +3,8 @@
      [editor.ui.core :only [get-id]]
      [editor.ui.views.grid :only [make-grid-view]]
      [editor.ui.views.canvas :only [make-canvas-view]]
+     [editor.ui.views.entity-builder :only [make-entity-builder-view]]
+     [editor.ui.views.dialogs.text-dialog :only [make-text-dialog]]
      [gloom.ui.core :only [clear-screen draw-tile tile-size]]
      [gloom.ui.quil-text :only [draw-text draw-text-centered]]
      )
@@ -28,15 +30,16 @@
         canvas-view (make-canvas-view [9 0] 36 12 :119 :787 palette-view state)]
     (-> state
         (add-view palette-view)
-        (add-view canvas-view))))
+        (add-view canvas-view)
+        (add-view (make-entity-builder-view [9 12] 36 12 :119 :787 state))
+        (assoc-in [:editor :dialogs] [(make-text-dialog [9 12] 20 6 :119 :787 state)])
+        )))
 
 (defn draw-editor [state]
   (q/no-cursor)
   (clear-screen  (:screen-size state)  (:tile-map state))
-  (draw-text-centered (dec (int (/ (second (:screen-size state)) 2)))
-                      (first (:screen-size state))
-                      (:tile-map state)
-                      "edit mode")
   (doseq [view (vals (get-in state [:editor :views]))]
+      ((:draw-fn view) view state))
+  (doseq [view (get-in state [:editor :dialogs])]
       ((:draw-fn view) view state))
   (draw-cursor state))

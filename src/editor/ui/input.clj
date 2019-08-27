@@ -4,11 +4,17 @@
   (:require [quil.core :as q]))
 
 (defn process-input-editor [state key-information]
-   (case (:key key-information)
+  (let [top-dialog (-> state
+                       (get-in [:editor :dialogs])
+                       last)
+        on-input-fn (:on-input-fn top-dialog)]
+  (if top-dialog
+    (on-input-fn state key-information)
+    (case (:key key-information)
       :q (-> state
              (dissoc :editor)
              (assoc :mode :start))
-     state))
+     state))))
 
 (defn get-clicked-view [state]
   (->> (get-in state [:editor :views])
