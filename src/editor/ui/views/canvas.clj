@@ -3,54 +3,29 @@
     [gloom.ui.core :only [draw-tile]]
     [editor.ui.views.core :only [make-view mouse->grid draw-text-relative]]))
 
-(defn- draw-view [view state]
-  (let [start-x (first (:position view))
-        start-y (second (:position view))
-        end-x (dec (+ start-x (:width view)))
-        end-y (dec (+ start-y (:height view)))]
-    (doseq [x (range start-x end-x)]
-            (draw-tile x start-y (:tile-map state) (:outline-id view)))
-    (doseq [x (range start-x (inc end-x))]
-            (draw-tile x end-y (:tile-map state) (:outline-id view)))
-    (doseq [y (range start-y end-y)]
-      (draw-tile start-x y (:tile-map state) (:outline-id view))
-      (draw-tile end-x y (:tile-map state) (:outline-id view))
-      )))
-
-(defn- draw-canvas [view state]
-   (doseq [[[x y] id] (:canvas view)]
+(defn- draw [view state]
+  (doseq [[[x y] id] (:canvas view)]
      (draw-tile x y (:tile-map state) id)))
 
-(defn draw-canvas-view [view state]
-  (draw-view view state)
-  (draw-canvas view state))
-
-(defn- on-click-canvas-view [[mouse-x mouse-y] view state]
-  (let [palette-view-id (:palette-view-id view)
-        selected-id (get-in state [:editor :views palette-view-id :selected-id])]
-    (println palette-view-id)
+(defn- on-click [[mouse-x mouse-y] view state]
   (assoc-in
     state
     [:editor :views (:id view) :canvas (mouse->grid view)]
-    selected-id
-    )))
+    (get-in state [:editor :views (:palette-view-id view) :selected-id])))
 
 (defn- make-blank-canvas [[start-x start-y] [end-x end-y]]
-  (let [positions (for [x (range start-x end-x)
-                        y (range start-y end-y)]
-                    {[x y] :0})]
-    (into {} positions)))
+  (into {}
+        (for
+          [x (range start-x end-x)
+           y (range start-y end-y)]
+          {[x y] :0})))
 
-(defn make-canvas-view [position width height outline-id cursor-id palette-view state]
-  (let [view (make-view position width height outline-id cursor-id)
-        start-x (inc (first (:position view)))
-        start-y (inc (second (:position view)))
-        end-x (dec (dec (+ start-x (:width view))))
-        end-y (dec (dec (+ start-y (:height view))))]
-    (-> view
-        (assoc :start [start-x start-y])
-        (assoc :end [end-x end-y])
-        (assoc :palette-view-id (:id palette-view))
-        (assoc :canvas (make-blank-canvas [start-x start-y] [end-x end-y]))
-        (assoc :draw-fn draw-canvas-view)
-        (assoc :on-click-fn on-click-canvas-view))))
+(defn make-canvas-view
+  [{:keys [palette-view] :as view-data} state]
+  (let [view (make-view view-data)]
+      (assoc
+        view
+        :draw-fn draw
+        :on-click-fn on-click
+        :palette-view-id (:id palette-view)
+        :canvas (make-blank-canvas (:start view) (:end view)))))

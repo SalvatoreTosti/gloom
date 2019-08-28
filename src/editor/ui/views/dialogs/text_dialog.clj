@@ -59,10 +59,13 @@
            height
            outline-id
            cursor-id
-           on-ok-fn
-           on-cancel-fn
            state]}]
-  (let [view (make-view position width height outline-id cursor-id)
+  (let [view (make-view
+               {:position position
+                :width width
+                :height height
+                :outline-id outline-id
+                :cursor-id cursor-id})
         start-x (inc (first (:position view)))
         start-y (inc (second (:position view)))
         end-x (dec (dec (+ start-x (:width view))))

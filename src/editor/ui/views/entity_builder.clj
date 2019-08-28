@@ -33,11 +33,15 @@
 
 (defn- on-click-canvas-view [[mouse-x mouse-y] view state]
   (println (mouse->grid view))
-  state
-  )
+  state)
 
 (defn make-entity-builder-view [position width height outline-id cursor-id state]
-  (let [view (make-view position width height outline-id cursor-id)
+  (let [view (make-view
+               {:position position
+                :width width
+                :height height
+                :outline-id outline-id
+                :cursor-id cursor-id})
         start-x (inc (first (:position view)))
         start-y (inc (second (:position view)))
         end-x (dec (dec (+ start-x (:width view))))
@@ -45,7 +49,5 @@
     (-> view
         (assoc :start [start-x start-y])
         (assoc :end [end-x end-y])
-
-
         (assoc :draw-fn draw-canvas-view)
         (assoc :on-click-fn on-click-canvas-view))))

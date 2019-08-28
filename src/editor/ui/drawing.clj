@@ -26,8 +26,21 @@
 
 (defn make-editor [state]
     (q/frame-rate 30)
-  (let [palette-view (make-grid-view [0 0] 10 24 :119 :787 state)
-        canvas-view (make-canvas-view [9 0] 36 12 :119 :787 palette-view state)]
+  (let [palette-view (make-grid-view
+                       {:position [0 0]
+                        :width 10
+                        :height 24
+                        :outline-id :119
+                        :cursor-id :787}
+                        state)
+        canvas-view (make-canvas-view
+                      {:position [9 0]
+                       :width 36
+                       :height 12
+                       :outline-id :119
+                       :cursor-id :787
+                       :palette-view palette-view}
+                      state)]
     (-> state
         (add-view palette-view)
         (add-view canvas-view)
