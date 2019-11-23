@@ -5,5 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [clojure-lanterna "0.9.7"]
-                 [quil "3.0.0"]]
+                 [quil "3.0.0"]
+                 ]
+  :aot  [main.main]
   :main main.main)

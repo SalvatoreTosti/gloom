@@ -25,7 +25,7 @@
   (assoc-in state [:editor :views (:id view)] view))
 
 (defn make-editor [state]
-    (q/frame-rate 30)
+  (q/frame-rate 30)
   (let [palette-view (make-grid-view
                        {:position [0 0]
                         :width 10
@@ -40,11 +40,18 @@
                        :outline-id :119
                        :cursor-id :787
                        :palette-view palette-view}
-                      state)]
+                      state)
+        entity-builder (make-entity-builder-view
+                         {:position [9 12]
+                          :width 36
+                          :height 12
+                          :outline-id :119
+                          :cursor-id :787}
+                         state)]
     (-> state
         (add-view palette-view)
         (add-view canvas-view)
-        (add-view (make-entity-builder-view [9 12] 36 12 :119 :787 state))
+        (add-view entity-builder)
         (assoc-in [:editor :dialogs]
                   [(make-text-dialog
                      {:position [9 12]
@@ -52,8 +59,8 @@
                       :height 6
                       :outline-id :119
                       :cursor-id :787
+                      :callback-path [:editor :a-test]
                       :state state})]))))
-
 
 (defn draw-editor [state]
   (q/no-cursor)

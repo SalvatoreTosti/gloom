@@ -25,8 +25,6 @@
 (defn- on-click [[mouse-x mouse-y] view state]
   state)
 
-(defn add-input-as-character [state key-str])
-
 (defn remove-last-character [state]
   (let [
         first-dialog (first (get-in state [:editor :dialogs]))
@@ -37,10 +35,19 @@
         ]
     state))
 
+(defn execute-callback [state]
+  (let [first-dialog (first (get-in state [:editor :dialogs]))
+        state (assoc-in state (:callback-path first-dialog) (:input-string first-dialog))]
+    state))
+
 (defn- on-input [state key-information]
   (cond
+    (= 10 (:key-code key-information))
+    (-> state
+        execute-callback
+        (update-in [:editor :dialogs] rest))
+
     (= 8 (:key-code key-information)) (remove-last-character state)
-;;     (= 10 (:key-code key-information)) (
     (re-seq #"[a-zA-Z0-9]" (str (:raw-key key-information)))
     (let [key-str (str (:raw-key key-information))
         first-dialog (first (get-in state [:editor :dialogs]))
@@ -59,6 +66,7 @@
            height
            outline-id
            cursor-id
+           callback-path
            state]}]
   (let [view (make-view
                {:position position
@@ -77,5 +85,6 @@
         (assoc :input-string "")
         (assoc :draw-fn draw)
         (assoc :on-click-fn on-click)
-        (assoc :on-input-fn on-input))))
+        (assoc :on-input-fn on-input)
+        (assoc :callback-path callback-path))))
 

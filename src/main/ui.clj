@@ -10,11 +10,14 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
+(defn sprite-sheet-image []
+      "resources/monochrome.png")
+
 (defn setup []
   (q/background 0)
   (q/frame-rate 15)
 
-  (let [base-image (q/load-image "resources/monochrome.png")]
+  (let [base-image (q/load-image (sprite-sheet-image))]
     (while (not (q/loaded? base-image))
       nil)
     {:screen-size [45 24]

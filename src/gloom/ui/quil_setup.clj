@@ -14,6 +14,10 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
+(defn sprite-sheet-image []
+;;     (clojure.java.io/resource
+      "resources/monochrome.png")
+
 (defn- get-start [column-number]
   (+ (* column-number tile-size) column-number))
 
@@ -83,7 +87,7 @@
 
 (defn reset-state-game [state]
   (let [game  (reset-game (new-game {:screen-size [45 24]}))
-        base-image (q/load-image "resources/monochrome.png")]
+        base-image (q/load-image (sprite-sheet-image))]
     (while (not (q/loaded? base-image))
       nil)
     (->
