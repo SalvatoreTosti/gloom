@@ -76,3 +76,9 @@
   (let [[cols, rows] screen-size]
     (doseq [x (range cols)]
       (draw-tile x y tile-map :0))))
+
+(defn clear-box
+  [start-x start-y end-x end-y tile-map]
+  (dorun (for [x (range start-x end-x)
+               y (range start-y end-y)]
+      (draw-tile x y tile-map :0))))

@@ -1,6 +1,6 @@
 (ns editor.ui.views.dialogs.text-dialog
   (:use
-    [gloom.ui.core :only [draw-tile]]
+    [gloom.ui.core :only [draw-tile clear-box]]
     [editor.ui.views.core :only [make-view mouse->grid draw-text-relative]]))
 
 (defn- draw-view [view state]
@@ -8,6 +8,7 @@
         start-y (second (:position view))
         end-x (dec (+ start-x (:width view)))
         end-y (dec (+ start-y (:height view)))]
+    (clear-box start-x start-y end-x end-y (:tile-map state))
     (doseq [x (range start-x end-x)]
             (draw-tile x start-y (:tile-map state) (:outline-id view)))
     (doseq [x (range start-x (inc end-x))]
