@@ -33,8 +33,34 @@
                          (sort-by #(bigdec (name %))))]
         (assoc
           view
+          :kind :grid
           :selected-id :2
           :display-ids display-ids
           :item-positions (build-image-positions (:start view) (:end view) display-ids)
+          :draw-fn draw
+          :on-click-fn on-click)))
+
+(defn pickle-grid-view [view]
+  {
+    :id (:id view)
+    :kind (:kind view)
+    :position (:position view)
+    :width (:width view)
+    :height (:height view)
+    :outline-id (:outline-id view)
+    :cursor-id (:cursor-id view)
+    :pixel-coordinates (:pixel-coordinates view)
+    :selected-id (:selected-id view)
+    :display-ids (:display-ids view)
+    :item-positions (:item-positions view)
+    })
+
+(defn unpickle-grid-view [pickled-view]
+  (let [view (make-view pickled-view)]
+        (assoc
+          view
+          :selected-id :2
+          :display-ids (:display-ids pickled-view)
+          :item-positions (:item-positions pickled-view)
           :draw-fn draw
           :on-click-fn on-click)))

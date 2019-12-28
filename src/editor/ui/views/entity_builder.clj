@@ -23,5 +23,24 @@
 (defn make-entity-builder-view [{:keys [] :as view-data} state]
   (assoc
     (make-view view-data)
+    :kind :entity-builder
+    :draw-fn draw-canvas-view
+    :on-click-fn on-click-canvas-view))
+
+(defn pickle-entity-builder-view [view]
+  {
+    :id (:id view)
+    :kind (:kind view)
+    :position (:position view)
+    :width (:width view)
+    :height (:height view)
+    :outline-id (:outline-id view)
+    :cursor-id (:cursor-id view)
+    :pixel-coordinates (:pixel-coordinates view)
+    })
+
+(defn unpickle-entity-builder-view [pickled-view]
+ (assoc
+    (make-view pickled-view)
     :draw-fn draw-canvas-view
     :on-click-fn on-click-canvas-view))
