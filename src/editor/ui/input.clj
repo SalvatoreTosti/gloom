@@ -13,7 +13,8 @@
     :canvas (pickle-canvas-view view)
     :entity-builder (pickle-entity-builder-view view)
     :grid (pickle-grid-view view)
-    view))
+    (do (println (:kind view))
+    view)))
 
 (defn unpickle [view]
   (case (:kind view)
@@ -22,10 +23,12 @@
     :grid (unpickle-grid-view view)
     view))
 
-;; (defn write-file-views [filename views]
-;;   (spit filename views))
-
-;; (set! *default-data-reader-fn* tagged-literal)
+(defn reconnect-canvas [views]
+  (let [grid (first (filter #(= (:kind %) :grid) (vals views)))
+        canvas (first (filter #(= (:kind %) :canvas) (vals views)))
+        canvas-id (:id canvas)
+        updated-views (assoc-in views [canvas-id :palette-view-id] (:id grid))]
+      updated-views))
 
 
 (defn process-input-editor [state key-information]
@@ -56,6 +59,7 @@
            (map #(vector (:id %) %))
            (into {})
            ;;Add look up for canvas's palette picker, right now it doesn't draw again after loading
+           (reconnect-canvas)
            (assoc-in state [:editor :views]))
        state))))
 

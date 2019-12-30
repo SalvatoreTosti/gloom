@@ -59,7 +59,8 @@
   (let [view (make-view pickled-view)]
         (assoc
           view
-          :selected-id :2
+;;           :selected-id :2
+          :kind :grid
           :display-ids (:display-ids pickled-view)
           :item-positions (:item-positions pickled-view)
           :draw-fn draw
