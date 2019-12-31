@@ -42,5 +42,6 @@
 (defn unpickle-entity-builder-view [pickled-view]
  (assoc
     (make-view pickled-view)
+    :kind :entity-builder
     :draw-fn draw-canvas-view
     :on-click-fn on-click-canvas-view))
