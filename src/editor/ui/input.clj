@@ -13,8 +13,8 @@
     :canvas (pickle-canvas-view view)
     :entity-builder (pickle-entity-builder-view view)
     :grid (pickle-grid-view view)
-    (do (println (:kind view))
-    view)))
+
+    nil))
 
 (defn unpickle [view]
   (case (:kind view)

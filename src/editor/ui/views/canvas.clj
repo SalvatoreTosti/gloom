@@ -20,6 +20,23 @@
            y (range start-y end-y)]
           {[x y] :0})))
 
+(defn make-canvas-view
+  [{:keys [palette-view] :as view-data} state]
+  (let [view (make-view view-data)]
+      (assoc
+        view
+        :kind :canvas
+        :draw-fn draw
+        :on-click-fn on-click
+        :palette-view-id (:id palette-view)
+        :canvas (make-blank-canvas (:start view) (:end view)))))
+
+(defn unpickle-canvas-view [pickled-view]
+  (-> pickled-view
+      (make-canvas-view nil)
+      (assoc :palette-view-id (:palette-view-id pickled-view))
+      (assoc :canvas (:canvas pickled-view))))
+
 (defn pickle-canvas-view [view]
   {
     :id (:id view)
@@ -33,25 +50,3 @@
     :canvas (:canvas view)
     :palette-view-id (:palette-view-id view)
     })
-
-(defn unpickle-canvas-view [pickled-view]
-  (let [view (make-view pickled-view)]
-      (assoc
-        view
-        :kind :canvas
-        :draw-fn draw
-        :on-click-fn on-click
-        :palette-view-id (:palette-view-id pickled-view)
-        :canvas (:canvas pickled-view))))
-
-
-(defn make-canvas-view
-  [{:keys [palette-view] :as view-data} state]
-  (let [view (make-view view-data)]
-      (assoc
-        view
-        :kind :canvas
-        :draw-fn draw
-        :on-click-fn on-click
-        :palette-view-id (:id palette-view)
-        :canvas (make-blank-canvas (:start view) (:end view)))))
