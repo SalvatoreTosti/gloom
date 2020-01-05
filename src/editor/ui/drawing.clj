@@ -24,7 +24,7 @@
 (defn- add-view [state view]
   (assoc-in state [:editor :views (:id view)] view))
 
-(defn- add-dialog [state view]
+(defn add-dialog [state view]
   (let [dialogs (get-in state [:editor :dialogs])
         dialogs (or dialogs '())]
     (->> view
