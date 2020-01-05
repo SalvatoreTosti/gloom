@@ -13,7 +13,6 @@
     :canvas (pickle-canvas-view view)
     :entity-builder (pickle-entity-builder-view view)
     :grid (pickle-grid-view view)
-
     nil))
 
 (defn unpickle [view]
