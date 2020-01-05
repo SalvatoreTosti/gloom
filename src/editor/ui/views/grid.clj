@@ -1,7 +1,14 @@
 (ns editor.ui.views.grid
   (:use
     [gloom.ui.core :only [draw-tile]]
-    [editor.ui.views.core :only [make-view mouse->grid draw-view-outline]]))
+    [editor.ui.views.core :only [make-view mouse->grid draw-view-outline]]
+    [gloom.entities.apple :only [make-apple]] 
+    [gloom.entities.aspects.renderable :only  [color image]]
+    ))
+
+(defn make-generator-map []
+  {:Apple  make-apple} 
+  )
 
 (defn- build-image-positions [[start-x start-y] [end-x end-y] display-ids]
   (let [positions (for [y (range start-y end-y)
@@ -17,7 +24,18 @@
 
 (defn- draw [view state]
   (draw-view-outline view state)
-  (draw-image-grid view state))
+  (doseq [[ [x y] entity-type] (:entity-positions view)]  
+    (let [entity-generator (entity-type (make-generator-map))
+          entity (entity-generator [0,0]) 
+          id (:id entity) 
+          ] 
+      
+      (println entity)
+      (println id)
+      (draw-tile x y (:tile-map state) (image entity) (color entity))   
+     ;; (draw-tile x y (:tile-map state) :943))))
+ ))) 
+  ;;(draw-image-grid view state))
 
 (defn- on-click [[mouse-x mouse-y] view state]
   (let [tile-id (get (:item-positions view) (mouse->grid view))]
@@ -33,6 +51,7 @@
                          (sort-by #(bigdec (name %))))]
         (assoc
           view
+          :entity-positions {[0,0] :Apple} 
           :kind :grid
           :selected-id :2
           :display-ids display-ids
