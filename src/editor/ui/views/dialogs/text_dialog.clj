@@ -68,7 +68,8 @@
            outline-id
            cursor-id
            callback-path
-           state]}]
+           ]} 
+   state]
   (let [view (make-view
                {:position position
                 :width width
