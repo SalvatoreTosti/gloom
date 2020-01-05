@@ -79,7 +79,9 @@
 (defn- round-down [number base]
   (* base (int (Math/floor (/ number base)))))
 
-(defn mouse->grid [view]
-  (let [current-x (/ (round-down (q/mouse-x) tile-size) tile-size)
-        current-y (/ (round-down (q/mouse-y) tile-size) tile-size)]
-    [current-x current-y]))
+(defn mouse->grid
+  ([view]
+   (mouse->grid [(q/mouse-x) (q/mouse-y)] tile-size view))
+  ([[x y] tile-size view]
+   [(/ (round-down x tile-size) tile-size)
+   (/ (round-down y tile-size) tile-size)]))
