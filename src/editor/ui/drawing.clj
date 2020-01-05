@@ -24,10 +24,10 @@
 (defn- add-view [state view]
   (assoc-in state [:editor :views (:id view)] view))
 
-(defn add-dialog [state view]
+(defn add-dialog [state dialog]
   (let [dialogs (get-in state [:editor :dialogs])
         dialogs (or dialogs '())]
-    (->> view
+    (->> dialog
          (conj dialogs)
          (assoc-in state [:editor :dialogs]))))
 
@@ -67,7 +67,7 @@
         (add-view palette-view)
         (add-view canvas-view)
         (add-view entity-builder)
-        (add-dialog text-dialog) 
+        ;;(add-dialog text-dialog) 
         )))
 
 (defn draw-editor [state]
