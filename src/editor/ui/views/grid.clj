@@ -7,35 +7,44 @@
     ))
 
 (defn make-generator-map []
-  {:Apple  make-apple} 
+  {:Apple  make-apple,
+   :Apple2 make-apple} 
   )
 
-(defn- build-image-positions [[start-x start-y] [end-x end-y] display-ids]
+(def generator-map
+  (memoize make-generator-map))
+
+(defn- build-image-positions [[start-x start-y] [end-x end-y] items]
   (let [positions (for [y (range start-y end-y)
                         x (range start-x end-x)]
                     [x y])]
-    (->> display-ids
+    (->> items 
          (zipmap positions)
          (into {}))))
 
-(defn- draw-image-grid [view state]
-  (doseq [[[x y] id] (:item-positions view)]
-    (draw-tile x y (:tile-map state) id)))
+(defn build-entity-positions [view]
+  (let [generator-map (generator-map)
+        entity-keys (keys generator-map) 
+        entity-positions-map (build-image-positions (:start view) (:end view) entity-keys)
+        ]
+    entity-positions-map 
+    )
+  )
+
+(defn draw-entity-grid [view state]
+    (doseq [[[x y] entity-type] (:entity-positions view)]  
+      (let [entity-generator (entity-type (generator-map))
+            entity (entity-generator [0,0]) 
+            ] 
+        (draw-tile x y (:tile-map state) (image entity) (color entity))   
+        )  
+      )
+    )
 
 (defn- draw [view state]
   (draw-view-outline view state)
-  (doseq [[ [x y] entity-type] (:entity-positions view)]  
-    (let [entity-generator (entity-type (make-generator-map))
-          entity (entity-generator [0,0]) 
-          id (:id entity) 
-          ] 
-      
-      (println entity)
-      (println id)
-      (draw-tile x y (:tile-map state) (image entity) (color entity))   
-     ;; (draw-tile x y (:tile-map state) :943))))
- ))) 
-  ;;(draw-image-grid view state))
+  (draw-entity-grid view state)
+  )
 
 (defn- on-click [[mouse-x mouse-y] view state]
   (let [tile-id (get (:item-positions view) (mouse->grid view))]
@@ -51,7 +60,8 @@
                          (sort-by #(bigdec (name %))))]
         (assoc
           view
-          :entity-positions {[0,0] :Apple} 
+          :entity-positions (build-entity-positions view)  
+          
           :kind :grid
           :selected-id :2
           :display-ids display-ids
