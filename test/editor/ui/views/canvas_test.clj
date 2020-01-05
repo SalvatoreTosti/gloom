@@ -1,7 +1,6 @@
-(ns gloom.editor.ui.views.canvas-test
+(ns editor.ui.views.canvas-test
   (:require [clojure.test :refer :all]
             [editor.ui.views.canvas :refer :all]))
-
 
 (defn default-view []
   {:position [0 0]
