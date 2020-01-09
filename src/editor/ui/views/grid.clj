@@ -10,7 +10,7 @@
   {
    :Apple  make-apple,
    :Apple2 make-apple
-  })
+   })
 
 (def generator-map
   (memoize make-generator-map))
@@ -52,7 +52,7 @@
         (assoc-in state [:editor :views (:id view) :selected-id] (image entity)) 
         state))
     state))
-  
+
 (defn make-grid-view [{:keys [] :as view-data} state]
   (let [view (make-view view-data)
         display-ids (->> state
@@ -69,32 +69,27 @@
       :on-click-fn on-click)))
 
 (defn pickle-grid-view [view]
-  {
-   :id (:id view)
-   :kind (:kind view)
-   :position (:position view)
-   :width (:width view)
-   :height (:height view)
-   :outline-id (:outline-id view)
-   :cursor-id (:cursor-id view)
-   :pixel-coordinates (:pixel-coordinates view)
-   :selected-id (:selected-id view)
-   :display-ids (:display-ids view)
-   :entity-positions (:entity-positions view) 
-   })
+  (select-keys 
+    view 
+    [
+     :id
+     :kind
+     :position
+     :width
+     :height
+     :outline-id
+     :pixel-coordinates
+     :selected-id
+     :display-ids
+     :entity-positions
+     ])) 
 
 (defn unpickle-grid-view [pickled-view]
-  (let [view (make-view pickled-view)
-       new-view (assoc
-       view
-       :selected-id (:selected-id pickled-view) 
-       :kind :grid
-       :display-ids (:display-ids pickled-view)
-       :entity-positions (:entity-positions pickled-view)
-       :draw-fn draw
-       :on-click-fn on-click)]
-    ;(println new-view)    
-    new-view
-    ))
-
-
+  (assoc
+    (make-view pickled-view)
+    :selected-id (:selected-id pickled-view) 
+    :kind :grid
+    :display-ids (:display-ids pickled-view)
+    :entity-positions (:entity-positions pickled-view)
+    :draw-fn draw
+    :on-click-fn on-click))
