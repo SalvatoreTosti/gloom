@@ -48,4 +48,127 @@
             {[2 2] :Apple
              [3 2] :Apple2}
          )))
+(deftest test-pickle-grid-view []
+  (testing "testing pickle grid view"
+    (are [x y z] (= z (y (pickle-grid-view x)))
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :id 0  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :kind :test  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :position [0 0]  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :width 1  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :height 1  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :outline-id :1  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :pixel-coordinates {}  
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :selected-id :2 
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :display-ids {:1 "image-data"}   
+     {:id 0
+      :kind :test
+      :position [0 0]
+      :width 1
+      :height 1
+      :outline-id :1
+      :pixel-coordinates {}
+      :selected-id :2
+      :display-ids {:1 "image-data"} 
+      :entity-positions {[0 0] :1}
+      } :entity-positions {[0 0] :1}  
 
+
+
+
+
+
+
+
+
+
+  )))  
