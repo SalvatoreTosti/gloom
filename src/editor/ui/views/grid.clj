@@ -49,7 +49,7 @@
     (let [entity-generator (entity-type (generator-map))
           entity (entity-generator [0,0])] 
       (if entity 
-        (assoc-in state [:editor :views (:id view) :selected-id] (image entity)) 
+        (assoc-in state [:editor :views (:id view) :selected-id] entity-type) 
         state))
     state))
 
@@ -61,7 +61,8 @@
                          (sort-by #(bigdec (name %))))]
     (assoc
       view
-      :entity-positions (build-entity-positions view)  
+      :entity-positions (build-entity-positions view) 
+      :entity-generators (generator-map) 
       :kind :grid
       :selected-id :2
       :display-ids display-ids
@@ -82,6 +83,7 @@
      :selected-id
      :display-ids
      :entity-positions
+     :entity-generators
      ])) 
 
 (defn unpickle-grid-view [pickled-view]
@@ -91,5 +93,7 @@
     :kind :grid
     :display-ids (:display-ids pickled-view)
     :entity-positions (:entity-positions pickled-view)
+    :entity-generators (:entity-generators pickled-view) 
     :draw-fn draw
     :on-click-fn on-click))
+
