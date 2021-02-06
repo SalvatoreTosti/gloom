@@ -1,6 +1,6 @@
 (ns gloom.entities.aspects.positionable
-    (:use [gloom.entities.core :only [defaspect]]
-          [gloom.world :only [find-empty-tile]]))
+  (:use [gloom.entities.core :only [defaspect]]
+        [gloom.world :only [find-empty-tile]]))
 
 (defaspect Positionable
   (position [this world]

@@ -5,8 +5,7 @@
 (defaspect Receiver
   (receive-message [this message world]
                    (let [msg {:tick (:tick world) :message message}]
-                     (update-in world [:entities (:id this) :messages] conj msg)
-                     )))
+                     (update-in world [:entities (:id this) :messages] conj msg))))
 
 (defn send-message [entity message args world]
   (if (satisfies? Receiver entity)

@@ -8,7 +8,7 @@
 
 (defn clear-screen [screen]
   (let [[cols, rows] screen-size
-         blank (apply str (repeat cols \space))]
+        blank (apply str (repeat cols \space))]
     (doseq [row (range rows)]
       (s/put-string screen 0 row blank))))
 
@@ -26,7 +26,7 @@
         end-y (min end-y map-rows)
         start-x (- end-x vcols)
         start-y (- end-y vrows)]
-        [start-x start-y end-x end-y]))
+    [start-x start-y end-x end-y]))
 
 (defn draw-entity [screen start-x start-y {:keys [location glyph color]}]
   (let [[entity-x entity-y] location
@@ -63,8 +63,8 @@
     (:kind ui)))
 
 (defmethod draw-ui :start [ui game screen]
-   (s/put-string screen 0 0 "Welcome!")
-   (s/put-string screen 0 1 "Press enter to win or any key to exit..."))
+  (s/put-string screen 0 0 "Welcome!")
+  (s/put-string screen 0 1 "Press enter to win or any key to exit..."))
 
 (defn draw-messages [screen messages]
   (doseq [[i msg] (enumerate messages)]
@@ -99,8 +99,8 @@
 
 (defn draw-item-list [screen line-count start-draw items]
   (->> items
-      (drop start-draw)
-      (draw-string-list screen)))
+       (drop start-draw)
+       (draw-string-list screen)))
 
 (defn draw-list [ui game screen]
   (draw-item-list screen 0 0 (:list ui))

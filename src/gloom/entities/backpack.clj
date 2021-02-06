@@ -6,8 +6,7 @@
 
 (defn make-backpack
   ([location]
-  (map->Backpack {
-                   :id (get-id)
+   (map->Backpack {:id (get-id)
                    :glyph "b"
                    :color :green
                    :location location

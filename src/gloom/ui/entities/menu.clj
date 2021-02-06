@@ -5,7 +5,6 @@
         [gloom.ui.quil-text :only [draw-text-centered text-center-start draw-text invert-word]])
   (:require [lanterna.screen :as s]))
 
-
 (defrecord Menu [id kind header items selection])
 
 (defn item-mapping [item mapping]
@@ -46,12 +45,12 @@
   (let [selection (:selection this)
         items (:items this)]
     (when (and
-            (not (neg? selection))
-            (< selection (count items)))
+           (not (neg? selection))
+           (< selection (count items)))
       (-> item-pairs
           (nth selection)
           (first)))))
 
 (add-aspect Menu Selection
             (select [this game]
-              (get-selection this)))
+                    (get-selection this)))

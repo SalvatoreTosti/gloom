@@ -1,17 +1,16 @@
 (ns main.ui
-   (:use [gloom.ui.quil-setup :only [reset-state-game get-tiles]]
-         [gloom.ui.quil-drawing :only [draw-game]]
-         [gloom.ui.quil-key :only [process-input-game]]
-         [gloom.ui.core :only [tile-size clear-screen]]
-         [gloom.ui.quil-text :only [draw-text draw-text-centered]]
-         [editor.ui.drawing :only [draw-editor make-editor]]
-         [editor.ui.input :only [process-input-editor update-editor]]
-         )
+  (:use [gloom.ui.quil-setup :only [reset-state-game get-tiles]]
+        [gloom.ui.quil-drawing :only [draw-game]]
+        [gloom.ui.quil-key :only [process-input-game]]
+        [gloom.ui.core :only [tile-size clear-screen]]
+        [gloom.ui.quil-text :only [draw-text draw-text-centered]]
+        [editor.ui.drawing :only [draw-editor make-editor]]
+        [editor.ui.input :only [process-input-editor update-editor]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
 (defn sprite-sheet-image []
-      "resources/monochrome.png")
+  "resources/monochrome.png")
 
 (defn setup []
   (q/background 0)
@@ -69,7 +68,6 @@
            (make-editor)
            (assoc :mode :edit))
     state))
-
 
 (defmethod process-input :play [state key-information]
   (process-input-game state key-information))

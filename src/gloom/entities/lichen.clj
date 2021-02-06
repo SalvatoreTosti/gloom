@@ -9,15 +9,14 @@
 (defrecord Lichen [id glyph color location max-hp hp name type])
 
 (defn make-lichen [location]
-  (map->Lichen {
-                 :id (get-id)
-                 :glyph "F"
-                 :color :green
-                 :location location
-                 :max-hp 1
-                 :hp 1
-                 :name "lichen"
-                 :type :lichen}))
+  (map->Lichen {:id (get-id)
+                :glyph "F"
+                :color :green
+                :location location
+                :max-hp 1
+                :hp 1
+                :name "lichen"
+                :type :lichen}))
 
 (defn should-grow [this world]
   (let [entities (get-entities-around world (:location this) 5)
@@ -35,10 +34,10 @@
     world))
 
 (extend-type Lichen Entity
-  (tick [this world]
-        (if (should-grow this world)
-          (grow this world)
-          world)))
+             (tick [this world]
+               (if (should-grow this world)
+                 (grow this world)
+                 world)))
 
 (add-aspect Lichen Destructible)
 (add-aspect Lichen Describable

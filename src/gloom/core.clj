@@ -17,8 +17,8 @@
 
 (defn new-game [options]
   (->Game
-    nil
-    [(->UI :start)]
-    nil
-    nil
-    options))
+   nil
+   [(->UI :start)]
+   nil
+   nil
+   options))

@@ -5,9 +5,9 @@
 (defrecord Delete [id name world-relative-location])
 
 (defn make-delete [location]
-  (map->Delete{:id (get-id)
-               :name "delete"
-               :world-relative-location location}))
+  (map->Delete {:id (get-id)
+                :name "delete"
+                :world-relative-location location}))
 (add-aspect Delete Effect
             (apply-effect [this caster target world]
                           (-> world

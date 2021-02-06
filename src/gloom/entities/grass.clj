@@ -10,12 +10,11 @@
 (defrecord Grass [id location max-hp hp type])
 
 (defn make-grass [location]
-  (map->Grass {
-                :id (get-id)
-                :location location
-                :max-hp 1
-                :hp 1
-                :type :grass}))
+  (map->Grass {:id (get-id)
+               :location location
+               :max-hp 1
+               :hp 1
+               :type :grass}))
 
 (defn should-grow []
   (< (rand) 0.0005))
@@ -29,10 +28,10 @@
     world))
 
 (extend-type Grass Entity
-  (tick [this world]
-        (if (should-grow)
-          (grow this world)
-          world)))
+             (tick [this world]
+               (if (should-grow)
+                 (grow this world)
+                 world)))
 
 (defn find-adjacent-grass-tile [grasses overflow-counter world]
   (cond
@@ -61,9 +60,8 @@
 (add-aspect Grass Positionable
             (position [this world]
                       (->> world
-                          (get-tile-position)
-                          (assoc this :location))
-            ))
+                           (get-tile-position)
+                           (assoc this :location))))
 (add-aspect Grass Describable
             (type-name [this]
                        "grass"))

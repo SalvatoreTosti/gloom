@@ -17,9 +17,9 @@
 
 (defaspect Leveler
   (level-up [{:keys [id] :as this} world]
-    (let [this (update-in this [:max-hp] inc)
-          this (update-in this [:hp] inc)]
-      (assoc-in world [:entities id] this)))
+            (let [this (update-in this [:max-hp] inc)
+                  this (update-in this [:hp] inc)]
+              (assoc-in world [:entities id] this)))
 
   (add-exp [{:keys [id exp] :as this} exp-amount world]
            (let [new-exp (+ exp-amount exp)

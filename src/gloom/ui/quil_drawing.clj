@@ -12,7 +12,7 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
-(defn get-viewport-coords [screen-center {:keys [options] :as game} ]
+(defn get-viewport-coords [screen-center {:keys [options] :as game}]
   (let [[cols rows] (:screen-size options)
         [center-x center-y] screen-center
         [map-cols map-rows] world-size
@@ -22,7 +22,6 @@
         end-y (min (+ start-y rows) map-rows)]
     [(- end-x cols) (- end-y rows) end-x end-y]))
 
-
 (defn draw-wall [location world]
   (let [north (= :wall (get-tile-kind world (destination-coords location :n)))
         east (= :wall (get-tile-kind world (destination-coords location :e)))
@@ -30,29 +29,27 @@
         west (= :wall (get-tile-kind world (destination-coords location :w)))]
     (cond
       (and
-        (not north)
-        (not east)
-        (not south)
-        (not west)) :51
+       (not north)
+       (not east)
+       (not south)
+       (not west)) :51
       (and
-        (not north)
-        (not east)) :20
+       (not north)
+       (not east)) :20
       (and
-        (not east)
-        (not south)) :84
+       (not east)
+       (not south)) :84
       (and
-        (not south)
-        (not west)) :82
+       (not south)
+       (not west)) :82
       (and
-        (not west)
-        (not north)) :18
+       (not west)
+       (not north)) :18
       (not north) :19
       (not east) :52
       (not south) :83
       (not west) :50
-      :else :51)
-  ))
-
+      :else :51)))
 
 (defn tile-kind-lookup [kind location world]
   (cond
@@ -80,7 +77,7 @@
             :let [row-tiles (subvec (tiles mrow-idx) start-x end-x)]]
       (doseq [col (range view-cols)
               :let [{:keys [kind color]} (row-tiles col)]]
-          (draw-tile col vrow-idx tile-map (tile-kind-lookup kind [(+ start-x col) (+ start-y vrow-idx)] world) color)))))
+        (draw-tile col vrow-idx tile-map (tile-kind-lookup kind [(+ start-x col) (+ start-y vrow-idx)] world) color)))))
 
 (defn draw-world [screen-size viewport-coordinates {:keys [tiles entities] :as world} tile-map]
   (draw-terrain screen-size viewport-coordinates tiles tile-map world)
@@ -131,7 +128,7 @@
   (let [screen-size (:screen-size options)
         y (dec (second screen-size))
         player (get-in world [:entities :player])
-        display-word (str "health: " (:hp player) "/" (:max-hp player) " exp: "(:exp player))]
+        display-word (str "health: " (:hp player) "/" (:max-hp player) " exp: " (:exp player))]
     (clear-row y screen-size tile-map)
     (draw-text 0 y tile-map display-word)))
 
@@ -139,10 +136,10 @@
   (let [world (:world game)
         player (get-in world [:entities :player])]
     (draw-world
-      (get-in game [:options :screen-size])
-      (get-viewport-coords (:location player) game)
-      world
-      (:tile-map state))
+     (get-in game [:options :screen-size])
+     (get-viewport-coords (:location player) game)
+     world
+     (:tile-map state))
     (draw-messages world 2 (:messages player) (:tile-map state))
     (draw-hud game (:tile-map state))))
 
@@ -158,20 +155,20 @@
     (invert-tile x y)))
 
 (defmethod draw-ui :cursor [state ui {:keys [world options] :as game}]
-   (let [player (get-in world [:entities :player])
-         viewport-coordinates (get-viewport-coords (:location player) game)]
-     (draw-world
-       (:screen-size options)
-       viewport-coordinates
-       world
-       (:tile-map state))
-     (draw-cursor viewport-coordinates state)))
+  (let [player (get-in world [:entities :player])
+        viewport-coordinates (get-viewport-coords (:location player) game)]
+    (draw-world
+     (:screen-size options)
+     viewport-coordinates
+     world
+     (:tile-map state))
+    (draw-cursor viewport-coordinates state)))
 
 (defn draw-game [state]
-    (draw-ui
-      state
-      (peek-ui (:game state))
-      (:game state)))
+  (draw-ui
+   state
+   (peek-ui (:game state))
+   (:game state)))
 
 (defn make-sketch []
   (q/defsketch gloom-sketch

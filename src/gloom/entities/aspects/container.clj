@@ -17,4 +17,4 @@
          (get-in this [:items id]))
 
   (withdraw [this item]
-    (update-in this [:items] dissoc (:id item))))
+            (update-in this [:items] dissoc (:id item))))

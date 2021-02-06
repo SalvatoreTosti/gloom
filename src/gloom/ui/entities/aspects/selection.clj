@@ -24,6 +24,6 @@
           (let [selection (:selection this)
                 items (:items this)]
             (when (and
-                    (not (neg? selection))
-                    (< selection (count items)))
+                   (not (neg? selection))
+                   (< selection (count items)))
               (nth items selection)))))

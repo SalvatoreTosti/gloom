@@ -128,9 +128,9 @@
 (defn get-tiles-around
   ([world coord] (get-tiles-around world coord 1))
   ([world coord radius]
-     (map
-       #(get-tile-from-tiles (:tiles world) %)
-       (square coord radius))))
+   (map
+    #(get-tile-from-tiles (:tiles world) %)
+    (square coord radius))))
 
 (defn set-tiles [world locations tile-kind]
   (if (empty? locations)
@@ -138,7 +138,7 @@
     (let [location (first locations)
           kind (tile-kind tiles)
           world (set-tile world location kind)]
-        (set-tiles world (rest locations) tile-kind))))
+      (set-tiles world (rest locations) tile-kind))))
 
 (defn spawn-room [world location size wall-width]
   (-> world
@@ -150,12 +150,12 @@
   ([]
    (random-world [160 50]))
   ([size]
-  (let [world (make-world (random-tiles size) size)
-        world (nth (iterate smooth-world world) 3)]
-    world)))
+   (let [world (make-world (random-tiles size) size)
+         world (nth (iterate smooth-world world) 3)]
+     world)))
 
 (defn empty-world
   ([]
    (empty-world [160 50]))
   ([size]
-  (make-world (empty-tiles size) size)))
+   (make-world (empty-tiles size) size)))

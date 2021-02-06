@@ -16,7 +16,7 @@
 
 (defn sprite-sheet-image []
 ;;     (clojure.java.io/resource
-      "resources/monochrome.png")
+  "resources/monochrome.png")
 
 (defn- get-start [column-number]
   (+ (* column-number tile-size) column-number))
@@ -30,15 +30,15 @@
 
 (defn- get-tile-row-rec [source-image row-number max-width accumulator counter]
   (let [tile-id (-> row-number
-                  (* max-width)
-                  (+ counter)
-                  (str)
-                  (keyword))
+                    (* max-width)
+                    (+ counter)
+                    (str)
+                    (keyword))
         tile (get-tile source-image counter row-number)
         accumulator (assoc accumulator tile-id tile)]
     (if
-      (= counter (dec max-width)) accumulator
-      (get-tile-row-rec source-image row-number max-width accumulator (inc counter)))))
+     (= counter (dec max-width)) accumulator
+     (get-tile-row-rec source-image row-number max-width accumulator (inc counter)))))
 
 (defn- get-tile-row [source-image row-number row-width]
   (get-tile-row-rec source-image row-number row-width {} 0))
@@ -53,8 +53,8 @@
 (defn add-creature [world make-creature]
   (let [creature (make-creature (find-empty-tile world))
         creature (if
-                   (satisfies? Positionable creature) (position creature world)
-                   creature)]
+                  (satisfies? Positionable creature) (position creature world)
+                  creature)]
     (assoc-in world [:entities (:id creature)] creature)))
 
 (defn add-creatures [world make-creature n]
@@ -63,13 +63,12 @@
        n))
 
 (defn populate-world [world]
-    (-> world
-        (add-creatures make-lichen 30)
-        (add-creatures make-bunny 20)
-        (add-creatures make-rat 20)
-        (add-creatures make-apple 30)
-        (add-creatures make-grass 300)
-        ))
+  (-> world
+      (add-creatures make-lichen 30)
+      (add-creatures make-bunny 20)
+      (add-creatures make-rat 20)
+      (add-creatures make-apple 30)
+      (add-creatures make-grass 300)))
 
 (defn- reset-game [game]
   (let [world  (random-world)
@@ -91,12 +90,11 @@
     (while (not (q/loaded? base-image))
       nil)
     (->
-      state
-      (assoc :img base-image)
-      (assoc :tile-map (get-tiles base-image 32 32))
-      (assoc :counter 0)
-      (assoc :game game)
-      )))
+     state
+     (assoc :img base-image)
+     (assoc :tile-map (get-tiles base-image 32 32))
+     (assoc :counter 0)
+     (assoc :game game))))
 
 (defn setup []
   (q/background 0)

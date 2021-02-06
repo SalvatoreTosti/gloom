@@ -8,8 +8,8 @@
 (defrecord Damage [id name])
 
 (defn make-dice-damage []
-  (map->Damage{:id (get-id)
-               :name "dice damage"}))
+  (map->Damage {:id (get-id)
+                :name "dice damage"}))
 
 (defn roll-dice [[dice-type dice-count]]
   (let [dice-range (case dice-type

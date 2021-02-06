@@ -33,12 +33,12 @@
         (add-creatures make-apple 300))))
 
 (defn reset-game [game]
-    (-> game
-        (assoc :world (random-world))
-        (update :world populate-world)
-        (assoc-in [:world :entities :player :inventory] (make-backpack))
-        (pop-ui)
-        (push-ui (->UI :play))))
+  (-> game
+      (assoc :world (random-world))
+      (update :world populate-world)
+      (assoc-in [:world :entities :player :inventory] (make-backpack))
+      (pop-ui)
+      (push-ui (->UI :play))))
 
 (defn skip-tick [game]
   (assoc game :skip-tick true))
@@ -104,7 +104,7 @@
     (case input
       :escape (pop-ui game)
       :enter (let
-               [id (select ui game)]
+              [id (select ui game)]
                (-> game
                    (update-in [:world] #(drop-item % id))
                    (pop-ui)))

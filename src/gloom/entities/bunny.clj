@@ -6,19 +6,16 @@
         [gloom.entities.aspects.renderable :only [Renderable]]
         [gloom.entities.aspects.describable :only [Describable]]))
 
-
-
 (defrecord Bunny [id glyph color location max-hp hp name])
 
 (defn make-bunny [location]
-  (map->Bunny {
-                 :id (get-id)
-                 :glyph "v"
-                 :color :yellow
-                 :location location
-                 :max-hp 4
-                 :hp 4
-                 :name "bunny"}))
+  (map->Bunny {:id (get-id)
+               :glyph "v"
+               :color :yellow
+               :location location
+               :max-hp 4
+               :hp 4
+               :name "bunny"}))
 
 (defn should-move []
   (< (rand) 0.5))
@@ -29,12 +26,12 @@
     (:location bunny)))
 
 (extend-type Bunny Entity
-  (tick [this world]
-        (let [move-location (get-move-location this world)]
-          (cond
-            (not (should-move)) world
-            (not (can-move? this move-location world)) world
-            :else (move this (get-move-location this world) world)))))
+             (tick [this world]
+               (let [move-location (get-move-location this world)]
+                 (cond
+                   (not (should-move)) world
+                   (not (can-move? this move-location world)) world
+                   :else (move this (get-move-location this world) world)))))
 
 (add-aspect Bunny Mobile)
 (add-aspect Bunny Destructible)

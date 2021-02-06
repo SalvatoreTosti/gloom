@@ -18,21 +18,19 @@
 (defrecord Player [id glyph color location max-hp hp attack exp image])
 
 (defn make-player [world]
-  (map->Player {
-                 :id :player
-                 :glyph "@"
-                 :color :yellow
-                 :location (find-empty-tile world)
-                 :max-hp 10
-                 :hp 10
-                 :attack 2
-                 :exp 0
-                 :attack-dice {:d4 1 :d6 2}
-                 }))
+  (map->Player {:id :player
+                :glyph "@"
+                :color :yellow
+                :location (find-empty-tile world)
+                :max-hp 10
+                :hp 10
+                :attack 2
+                :exp 0
+                :attack-dice {:d4 1 :d6 2}}))
 
 (extend-type Player Entity
-  (tick [this world]
-        world))
+             (tick [this world]
+               world))
 
 (defn view-inventory [this]
   (get-in this [:inventory :name]))
@@ -58,12 +56,12 @@
       :else world)))
 
 (defn drop-item [world id]
-   (let [player (get-in world [:entities :player])
-         target (find-empty-neighbor world (:location player))
-         item (fetch (:inventory player) id)]
-     (if target
-       (dump world player item target)
-       (send-message player "There's no room to drop the item!" nil world))))
+  (let [player (get-in world [:entities :player])
+        target (find-empty-neighbor world (:location player))
+        item (fetch (:inventory player) id)]
+    (if target
+      (dump world player item target)
+      (send-message player "There's no room to drop the item!" nil world))))
 
 (add-aspect Player Digger)
 (add-aspect Player Describable

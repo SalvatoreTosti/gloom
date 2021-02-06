@@ -9,14 +9,12 @@
 (defrecord Rat [id color location max-hp hp name])
 
 (defn make-rat [location]
-  (map->Rat {
-                 :id (get-id)
-                 :color :yellow
-                 :location location
-                 :max-hp 5
-                 :hp 5
-                 :name "rat"}))
-
+  (map->Rat {:id (get-id)
+             :color :yellow
+             :location location
+             :max-hp 5
+             :hp 5
+             :name "rat"}))
 
 (defn should-move [this world]
   (let [radius 5
@@ -34,12 +32,12 @@
     (:location rat)))
 
 (extend-type Rat Entity
-  (tick [this world]
-        (let [move-location (get-move-location this world)]
-          (cond
-            (not (should-move this world)) world
-            (not (can-move? this move-location world)) world
-            :else (move this (get-move-location this world) world)))))
+             (tick [this world]
+               (let [move-location (get-move-location this world)]
+                 (cond
+                   (not (should-move this world)) world
+                   (not (can-move? this move-location world)) world
+                   :else (move this (get-move-location this world) world)))))
 
 (add-aspect Rat Mobile)
 (add-aspect Rat Destructible)

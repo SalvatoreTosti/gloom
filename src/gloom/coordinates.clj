@@ -26,14 +26,14 @@
 
 (defn- destination-coords-rec [location dirs accumulator]
   (if (empty? dirs) accumulator
-    (let [coord (offset-coords location (dir-to-offset (first dirs)))]
-      (destination-coords-rec coord (rest dirs) (conj accumulator coord)))))
+      (let [coord (offset-coords location (dir-to-offset (first dirs)))]
+        (destination-coords-rec coord (rest dirs) (conj accumulator coord)))))
 
 (defn destination-coords
   [origin & args]
   (let [coordinates (destination-coords-rec origin args [])]
     (if (= 1 (count coordinates)) (first coordinates)
-      coordinates)))
+        coordinates)))
 
 (defn neighbors
   [origin]
@@ -53,10 +53,10 @@
       (let [new-position  [(+ (first dir) (first position))
                            (+ (second dir) (second position))]]
         (recur
-          new-position
-          (dec len)
-          dir
-          (conj accumulator new-position))))))
+         new-position
+         (dec len)
+         dir
+         (conj accumulator new-position))))))
 
 (defn square [start radius]
   (let [upper-left (last (line start radius :nw))]

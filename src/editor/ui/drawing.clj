@@ -1,13 +1,12 @@
 (ns editor.ui.drawing
   (:use
-    [editor.ui.core :only [get-id]]
-    [editor.ui.views.grid :only [make-grid-view]]
-    [editor.ui.views.canvas :only [make-canvas-view]]
-    [editor.ui.views.entity-builder :only [make-entity-builder-view]]
-    [editor.ui.views.dialogs.text-dialog :only [make-text-dialog]]
-    [gloom.ui.core :only [clear-screen draw-tile tile-size]]
-    [gloom.ui.quil-text :only [draw-text draw-text-centered]]
-    )
+   [editor.ui.core :only [get-id]]
+   [editor.ui.views.grid :only [make-grid-view]]
+   [editor.ui.views.canvas :only [make-canvas-view]]
+   [editor.ui.views.entity-builder :only [make-entity-builder-view]]
+   [editor.ui.views.dialogs.text-dialog :only [make-text-dialog]]
+   [gloom.ui.core :only [clear-screen draw-tile tile-size]]
+   [gloom.ui.quil-text :only [draw-text draw-text-centered]])
   (:require [quil.core :as q]
             [quil.middleware :as m]))
 
@@ -34,35 +33,35 @@
 (defn make-editor [state]
   (q/frame-rate 30)
   (let [palette-view (make-grid-view
-                       {:position [0 0]
-                        :width 10
-                        :height 24
-                        :outline-id :119
-                        :cursor-id :787}
-                       state)
-        canvas-view (make-canvas-view
-                      {:position [9 0]
-                       :width 36
-                       :height 12
+                      {:position [0 0]
+                       :width 10
+                       :height 24
                        :outline-id :119
-                       :cursor-id :787
-                       :palette-view palette-view}
+                       :cursor-id :787}
                       state)
+        canvas-view (make-canvas-view
+                     {:position [9 0]
+                      :width 36
+                      :height 12
+                      :outline-id :119
+                      :cursor-id :787
+                      :palette-view palette-view}
+                     state)
         entity-builder (make-entity-builder-view
-                         {:position [9 12]
-                          :width 36
-                          :height 12
-                          :outline-id :119
-                          :cursor-id :787}
-                         state)
+                        {:position [9 12]
+                         :width 36
+                         :height 12
+                         :outline-id :119
+                         :cursor-id :787}
+                        state)
         text-dialog (make-text-dialog
-                      {:position [9 12]
-                       :width 20
-                       :height 6
-                       :outline-id :119
-                       :cursor-id :787
-                       :callback-path [:editor :a-test]}
-                      state)]
+                     {:position [9 12]
+                      :width 20
+                      :height 6
+                      :outline-id :119
+                      :cursor-id :787
+                      :callback-path [:editor :a-test]}
+                     state)]
     (-> state
         (add-view palette-view)
         (add-view canvas-view)

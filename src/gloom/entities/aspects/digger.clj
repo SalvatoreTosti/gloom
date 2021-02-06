@@ -1,6 +1,6 @@
 (ns gloom.entities.aspects.digger
-    (:use [gloom.entities.core :only [defaspect]]
-          [gloom.world :only [set-tile-floor check-tile]]))
+  (:use [gloom.entities.core :only [defaspect]]
+        [gloom.world :only [set-tile-floor check-tile]]))
 
 (defaspect Digger
   (dig [this dest world]

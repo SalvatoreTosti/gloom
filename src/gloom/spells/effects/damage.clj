@@ -8,8 +8,8 @@
 (defrecord Damage [id name])
 
 (defn make-damage []
-  (map->Damage{:id (get-id)
-               :name "damage"}))
+  (map->Damage {:id (get-id)
+                :name "damage"}))
 
 (defn attack-value [caster world]
   (get caster :attack 1))
@@ -24,8 +24,7 @@
 (add-aspect Damage Effect
             (apply-effect [this caster target world]
                           {:pre [(satisfies? Destructible target)]}
-                          (let [damage (get-damage caster target world)
-                                ]
+                          (let [damage (get-damage caster target world)]
                             (->> world
                                  (take-damage target damage)
                                  (send-message caster "%s damages the %s for %d damage!" [(get-name caster) (get-name target) damage])

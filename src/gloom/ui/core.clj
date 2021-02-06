@@ -45,17 +45,17 @@
        (q/image img (* x tile-size) (* y tile-size)))))
   ([x y tile-map id color]
    (let [[r g b] (translate-color color)]
-  (q/tint r g b)
-  (draw-tile x y id tile-map)
-  (q/no-tint))))
+     (q/tint r g b)
+     (draw-tile x y id tile-map)
+     (q/no-tint))))
 
 (defn invert-tile [x y]
   (let [clone (q/create-image tile-size tile-size :rgb)]
     (q/copy
-      (q/current-graphics)
-      clone
-      [(* x tile-size) (* y tile-size) tile-size tile-size]
-      [0 0 tile-size tile-size])
+     (q/current-graphics)
+     clone
+     [(* x tile-size) (* y tile-size) tile-size tile-size]
+     [0 0 tile-size tile-size])
     (q/image-filter clone :invert)
     (q/image clone (* x tile-size) (* y tile-size))))
 
@@ -81,4 +81,4 @@
   [start-x start-y end-x end-y tile-map]
   (dorun (for [x (range start-x end-x)
                y (range start-y end-y)]
-      (draw-tile x y tile-map :0))))
+           (draw-tile x y tile-map :0))))

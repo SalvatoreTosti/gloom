@@ -1,6 +1,5 @@
 (ns gloom.utils)
 
-
 (defn abs [i]
   (if (neg? i)
     (- i)

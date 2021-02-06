@@ -9,9 +9,9 @@
              "thing"))
 
 (defn get-name [this]
-          (if (nil? (:special-name this))
-            (type-name this)
-            (:special-name this)))
+  (if (nil? (:special-name this))
+    (type-name this)
+    (:special-name this)))
 
 
 

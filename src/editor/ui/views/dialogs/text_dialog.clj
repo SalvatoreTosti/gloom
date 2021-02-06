@@ -1,7 +1,7 @@
 (ns editor.ui.views.dialogs.text-dialog
   (:use
-    [gloom.ui.core :only [draw-tile clear-box]]
-    [editor.ui.views.core :only [make-view mouse->grid draw-text-relative]]))
+   [gloom.ui.core :only [draw-tile clear-box]]
+   [editor.ui.views.core :only [make-view mouse->grid draw-text-relative]]))
 
 (defn- draw-view [view state]
   (let [start-x (first (:position view))
@@ -10,13 +10,12 @@
         end-y (dec (+ start-y (:height view)))]
     (clear-box start-x start-y end-x end-y (:tile-map state))
     (doseq [x (range start-x end-x)]
-            (draw-tile x start-y (:tile-map state) (:outline-id view)))
+      (draw-tile x start-y (:tile-map state) (:outline-id view)))
     (doseq [x (range start-x (inc end-x))]
-            (draw-tile x end-y (:tile-map state) (:outline-id view)))
+      (draw-tile x end-y (:tile-map state) (:outline-id view)))
     (doseq [y (range start-y end-y)]
       (draw-tile start-x y (:tile-map state) (:outline-id view))
-      (draw-tile end-x y (:tile-map state) (:outline-id view))
-      )))
+      (draw-tile end-x y (:tile-map state) (:outline-id view)))))
 
 (defn- draw [view state]
   (draw-view view state)
@@ -27,13 +26,11 @@
   state)
 
 (defn remove-last-character [state]
-  (let [
-        first-dialog (first (get-in state [:editor :dialogs]))
+  (let [first-dialog (first (get-in state [:editor :dialogs]))
         first-dialog (update first-dialog :input-string #(str "" (reduce str (drop-last %))))
         other-dialogs (rest (get-in state [:editor :dialogs]))
         dialog-list (concat [first-dialog] other-dialogs)
-        state (assoc-in state [:editor :dialogs] dialog-list)
-        ]
+        state (assoc-in state [:editor :dialogs] dialog-list)]
     state))
 
 (defn execute-callback [state]
@@ -51,15 +48,14 @@
     (= 8 (:key-code key-information)) (remove-last-character state)
     (re-seq #"[a-zA-Z0-9]" (str (:raw-key key-information)))
     (let [key-str (str (:raw-key key-information))
-        first-dialog (first (get-in state [:editor :dialogs]))
-        first-dialog (update first-dialog :input-string #(str % key-str))
-        other-dialogs (rest (get-in state [:editor :dialogs]))
-        dialog-list (concat [first-dialog] other-dialogs)
-        state (assoc-in state [:editor :dialogs] dialog-list)]
-    state)
+          first-dialog (first (get-in state [:editor :dialogs]))
+          first-dialog (update first-dialog :input-string #(str % key-str))
+          other-dialogs (rest (get-in state [:editor :dialogs]))
+          dialog-list (concat [first-dialog] other-dialogs)
+          state (assoc-in state [:editor :dialogs] dialog-list)]
+      state)
     :else
-    state
-    ))
+    state))
 
 (defn make-text-dialog
   [{:keys [position
@@ -67,15 +63,14 @@
            height
            outline-id
            cursor-id
-           callback-path
-           ]} 
+           callback-path]}
    state]
   (let [view (make-view
-               {:position position
-                :width width
-                :height height
-                :outline-id outline-id
-                :cursor-id cursor-id})
+              {:position position
+               :width width
+               :height height
+               :outline-id outline-id
+               :cursor-id cursor-id})
         start-x (inc (first (:position view)))
         start-y (inc (second (:position view)))
         end-x (dec (dec (+ start-x (:width view))))
