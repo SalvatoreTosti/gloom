@@ -93,6 +93,7 @@
 (defn make-sketch []
   (q/defsketch gloom-sketch
     :title "gloom"
+    :renderer :p2d
     :size (let [screen-size [45 24]]
             [(* (first  screen-size) tile-size)
              (* (second screen-size) tile-size)])
